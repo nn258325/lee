@@ -280,20 +280,33 @@ function clearCart(){
 }
 
 // ==================== 分类导航 ====================
+// 高亮规则：手机单栏 → 滚动跟随；电脑宽屏（≥900px，左右两栏）→ 点谁亮谁
+// （两栏布局下同一屏总有多个分类，滚动位置无法唯一对应分类，滚动监听会亮错按钮）
 (function(){
   const app = document.getElementById('app');
   const catEls = Array.prototype.slice.call(document.querySelectorAll('.cat'));
   const chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+  const wideMQ = window.matchMedia('(min-width: 900px)');
+  let lockUntil = 0; // 程序滚动进行中，暂时不让滚动监听抢高亮
+  function setActive(i){
+    chips.forEach(function(c, j){ c.classList.toggle('on', j === i); });
+  }
+  function goTo(i){
+    setActive(i);
+    lockUntil = Date.now() + 1200;
+    if (catEls[i]) catEls[i].scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'start' });
+  }
   chips.forEach(function(ch, i){
-    ch.addEventListener('click', function(){
-      catEls[i].scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'start' });
-    });
+    ch.addEventListener('click', function(){ goTo(i); });
   });
+  setActive(0);
   app.addEventListener('scroll', function(){
+    if (wideMQ.matches) return;          // 宽屏两栏：高亮只跟点击走
+    if (Date.now() < lockUntil) return;  // 手机：平滑滚动过程中不抢
     const base = app.getBoundingClientRect().top;
     let idx = 0;
     catEls.forEach(function(c, i){ if (c.getBoundingClientRect().top - base - 90 <= 0) idx = i; });
-    chips.forEach(function(c, i){ c.classList.toggle('on', i === idx); });
+    setActive(idx);
   }, { passive: true });
 
   // ==================== 分类面板（底部 ☰ 唤出） ====================
@@ -307,7 +320,7 @@ function clearCart(){
   };
   window.goCat = function(i){
     closeCats();
-    if (catEls[i]) catEls[i].scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'start' });
+    goTo(i);
   };
 })();
 
