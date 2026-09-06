@@ -1,332 +1,275 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-page-node-id="Xb8qBE1bAab6DvKAzyOUdU">
-<head data-page-node-id="dHqSoUtwfU4qDzS4AADFMk">
-    <meta charset="UTF-8" data-page-node-id="CtiCnOsRSqchUXscZWmncb">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="JPquXAUEADt28hbIXeEdHR">
-    <title>COMIDA CHINA 扫码点餐</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #f4f5f7; color: #333; padding-bottom: 80px; }
-        header { background-color: #d9251c; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        header h1 { font-size: 1.3rem; font-weight: bold; }
-        header p { font-size: 0.9rem; opacity: 0.9; margin-top: 3px; }
-        
-        .container { max-width: 600px; margin: 0 auto; padding: 10px; }
-        
-        .menu-category { margin-top: 20px; margin-bottom: 10px; font-weight: bold; font-size: 1.1rem; color: #d9251c; border-left: 4px solid #d9251c; padding-left: 8px; background: #fff; padding-top: 6px; padding-bottom: 6px; }
-        
-        .menu-item { background: white; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .item-info { flex: 1; padding-right: 10px; }
-        
-        .item-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 4px; color: #111; line-height: 1.3; }
-        .item-title .cn-name { color: #d9251c; margin-left: 4px; font-size: 0.95rem; }
-        
-        .item-desc { font-size: 0.78rem; color: #666; margin-bottom: 6px; }
-        .item-price { color: #d9251c; font-weight: bold; font-size: 1rem; }
-        
-        .btn-group { display: flex; gap: 6px; }
-        .btn-add { background-color: #d9251c; color: white; border: none; padding: 6px 12px; border-radius: 16px; font-weight: bold; font-size: 0.85rem; cursor: pointer; }
-        .btn-add:active { opacity: 0.8; }
-        
-        /* 购物车底部栏 */
-        .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #ddd; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 0 auto; z-index: 1000; }
-        .cart-info { font-size: 0.9rem; }
-        .cart-price { color: #d9251c; font-size: 1.2rem; font-weight: bold; }
-        .btn-submit { background-color: #25d366; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-    </style>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f4f3ef">
+<title>COMIDA CHINA 扫码点餐</title>
+<style>
+/* finesse · register=h5 · morph=E-longform(single-scroll menu) · A=warm-offwhite+brand-red mono-accent
+ * B=system-sans 800/400 · C=ghost-number-cats+card-list+floating-pill-bar · D=CSS-only · E=delivery-app
+ * SOUL=6 SPECTACLE=3 DENSITY=8 */
+:root{
+  --bg:#f4f3ef; --card:#ffffff; --ink:#191712; --dim:#8b857a;
+  --line:rgba(25,23,18,.1); --red:#d9251c; --red-deep:#b01c14;
+  --ease:cubic-bezier(.32,.86,.28,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow-x:clip;}
+body{overflow:hidden;background:#141310;display:flex;align-items:center;justify-content:center;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);}
+.phone{position:relative;width:100%;height:100%;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;}
+@media (min-width:560px){
+  body{background:radial-gradient(120% 90% at 50% 0%, #26231d 0%, #141310 62%);}
+  .phone{width:406px;height:min(880px,94vh);border-radius:46px;border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 46px 120px -30px rgba(0,0,0,.9), 0 0 0 10px #0e0d0b;}
+}
+.hd{flex:none;background:var(--card);padding:calc(env(safe-area-inset-top) + 16px) 18px 13px;
+  border-bottom:1px solid var(--line);}
+.hd-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.hd h1{font-size:22px;font-weight:900;letter-spacing:-.02em;color:var(--red);line-height:1.05;}
+.hd .sub{font-size:11.5px;font-weight:600;color:var(--dim);margin-top:3px;letter-spacing:.05em;}
+.mesa{flex:none;font-size:12.5px;font-weight:800;background:var(--ink);color:#fff;
+  padding:8px 14px;border-radius:99px;letter-spacing:.03em;}
+#app{flex:1;overflow-y:auto;overflow-x:clip;padding:0 16px calc(env(safe-area-inset-bottom) + 122px);scrollbar-width:none;}
+#app::-webkit-scrollbar{width:0;}
+.chips{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;
+  margin:0 -16px 6px;padding:12px 16px 10px;background:rgba(244,243,239,.95);
+  backdrop-filter:blur(14px) saturate(140%);scrollbar-width:none;}
+.chips::-webkit-scrollbar{display:none;}
+.chips::after{content:"";flex:none;width:4px;}
+.chip{flex:none;font-size:13px;font-weight:700;color:var(--ink);background:var(--card);
+  border:1px solid var(--line);border-radius:99px;padding:9px 16px;min-height:37px;
+  transition:all .2s var(--ease);font-family:inherit;cursor:pointer;}
+.chip.on{background:var(--red);border-color:var(--red);color:#fff;}
+.chip:active{transform:scale(.94);}
+.cat{scroll-margin-top:68px;padding-top:24px;animation:rise .55s var(--ease) both calc(var(--i) * 60ms);}
+@keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.cat-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;row-gap:2px;margin-bottom:10px;}
+.ghost{font-size:40px;font-weight:900;letter-spacing:-.04em;color:rgba(217,37,28,.14);line-height:1;}
+.cat-head b{font-size:17px;font-weight:800;letter-spacing:-.01em;}
+.cat-head span{font-size:12px;font-weight:600;color:var(--dim);}
+.item{background:var(--card);border-radius:16px;padding:14px 15px;margin-bottom:10px;
+  box-shadow:0 1px 2px rgba(25,23,18,.04), 0 10px 26px -20px rgba(25,23,18,.25);}
+.iname{font-size:14.5px;font-weight:700;line-height:1.45;letter-spacing:-.01em;}
+.iname .cn{color:var(--red);margin-left:6px;font-size:13.5px;font-weight:700;}
+.desc{font-size:12.5px;color:var(--dim);margin-top:3px;}
+.prow{display:flex;align-items:center;gap:10px;padding-top:10px;}
+.prow + .prow{border-top:1px dashed var(--line);margin-top:10px;padding-top:11px;}
+.plabel{font-size:12.5px;font-weight:600;color:var(--dim);flex:none;}
+.pprice{margin-left:auto;font-size:16.5px;font-weight:800;color:var(--red);letter-spacing:-.01em;flex:none;}
+.st{display:flex;align-items:center;gap:9px;flex:none;margin-left:6px;}
+.st button{width:33px;height:33px;border-radius:50%;font-size:19px;line-height:1;cursor:pointer;
+  border:1.5px solid var(--line);background:var(--card);color:var(--ink);
+  display:grid;place-items:center;transition:transform .15s var(--ease),background .15s,border-color .15s;font-family:inherit;}
+.st .inc{background:var(--red);border-color:var(--red);color:#fff;
+  box-shadow:0 6px 14px -6px rgba(217,37,28,.55);}
+.st button:active{transform:scale(.86);}
+.st .qty{min-width:20px;text-align:center;font-size:15.5px;font-weight:800;}
+.prow:not(.has) .st{opacity:.92;}
+.prow:not(.has):not(.always) .dec,.prow:not(.has) .qty{display:none;}
+.foot{text-align:center;font-size:11.5px;color:var(--dim);padding:26px 0 8px;letter-spacing:.06em;}
+#bar{position:absolute;z-index:40;left:14px;right:14px;bottom:calc(env(safe-area-inset-bottom) + 14px);
+  background:linear-gradient(150deg,#e3271d,#b81a12);color:#fff;border-radius:18px;border:none;
+  display:flex;align-items:center;gap:12px;padding:12px 12px 12px 18px;cursor:pointer;
+  box-shadow:0 18px 40px -12px rgba(217,37,28,.5);transition:opacity .25s var(--ease),transform .15s var(--ease);
+  font-family:inherit;text-align:left;}
+#bar:active{transform:scale(.98);}
+#bar.off{opacity:.5;}
+#bar .binfo{flex:1;min-width:0;font-size:11.5px;font-weight:600;opacity:.9;line-height:1.3;}
+#bar .binfo b{display:block;font-size:18px;font-weight:900;letter-spacing:-.01em;opacity:1;}
+#bar-go{flex:none;border:none;background:#fff;color:var(--red);font-size:14.5px;font-weight:900;
+  border-radius:12px;padding:13px 20px;min-height:46px;font-family:inherit;letter-spacing:.02em;}
+#bar-count{display:inline-grid;place-items:center;min-width:21px;height:21px;padding:0 6px;border-radius:99px;
+  background:#fff;color:var(--red);font-weight:900;font-size:12.5px;}
+#bar-count.pop{animation:pop .35s var(--ease);}
+@keyframes pop{0%{transform:scale(1);}45%{transform:scale(1.45);}100%{transform:scale(1);}}
+#scrim{position:absolute;inset:0;z-index:50;background:rgba(20,19,16,.45);opacity:0;pointer-events:none;transition:opacity .3s ease;}
+#scrim.on{opacity:1;pointer-events:auto;}
+#sheet{position:absolute;left:0;right:0;bottom:0;z-index:55;background:var(--card);
+  border-radius:28px 28px 0 0;padding:10px 20px calc(env(safe-area-inset-bottom) + 18px);
+  transform:translateY(103%);transition:transform .44s var(--ease);max-height:82%;overflow-y:auto;
+  box-shadow:0 -18px 50px -20px rgba(20,19,16,.35);}
+#sheet.on{transform:none;}
+.handle{width:42px;height:4px;border-radius:99px;background:rgba(25,23,18,.15);margin:0 auto 14px;}
+#sheet h2{font-size:18px;font-weight:900;letter-spacing:-.01em;margin-bottom:4px;}
+.srow{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);}
+.srow:last-of-type{border-bottom:none;}
+.sname{flex:1;min-width:0;font-size:13.5px;font-weight:600;line-height:1.4;}
+.sname em{display:block;font-style:normal;font-size:12px;color:var(--dim);margin-top:2px;}
+#sheet .st button{width:34px;height:34px;}
+.sempty{text-align:center;color:var(--dim);font-size:13px;padding:26px 0;}
+.sheet-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 0 0;}
+.stfl{font-size:12px;font-weight:600;color:var(--dim);}
+#sheet-total{font-size:22px;font-weight:900;color:var(--red);letter-spacing:-.01em;}
+#sheet-actions{display:flex;gap:10px;}
+#clear-btn{border:1px solid var(--line);background:var(--card);color:var(--dim);font-size:13.5px;font-weight:700;
+  border-radius:13px;padding:12px 16px;min-height:47px;font-family:inherit;cursor:pointer;}
+#clear-btn:active{transform:scale(.95);}
+#submit-btn{border:none;cursor:pointer;background:var(--red);color:#fff;font-size:15px;font-weight:900;
+  border-radius:13px;padding:12px 22px;min-height:47px;font-family:inherit;letter-spacing:.02em;
+  box-shadow:0 8px 18px -8px rgba(217,37,28,.55);transition:transform .15s var(--ease);}
+#submit-btn:active{transform:scale(.95);}
+#submit-btn:disabled{opacity:.6;}
+
+@media (prefers-reduced-motion: reduce){
+  * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+</style>
 </head>
-<body data-page-node-id="v0RSFUcezbuEKRZ3jurEko">
+<body>
+<div class="phone v-b">
 
-    <header data-page-node-id="Rjhrxe2fZWQUqQp6hq9mWn">
-        <h1 data-page-node-id="AgWoyNT3eBAOZlp7B32Iyo">COMIDA CHINA (6098-8889)</h1>
-        <p data-page-node-id="6JmBAmLXFz0os16K1VKEjN">扫码点餐 / Menú Digital</p>
-        <p id="table-banner" style="margin-top:5px; font-size:0.85rem; background:rgba(0,0,0,0.18); display:inline-block; padding:2px 10px; border-radius:12px;" data-page-node-id="N736aJfj2jn72qAUvU8GFT"></p>
-    </header>
+<header class="hd">
+  <div class="hd-row">
+    <div><h1>COMIDA CHINA</h1><div class="sub">MENÚ DIGITAL · 扫码点餐 · 6098-8889</div></div>
+    <div class="mesa" id="mesa">Sin mesa</div>
+  </div>
+</header>
+<div id="app">
+<nav class="chips"><button class="chip" data-t="c0">CASADOS</button><button class="chip" data-t="c1">ENTRADAS</button><button class="chip" data-t="c2">SOPAS</button><button class="chip" data-t="c3">ARROZ FRITO</button><button class="chip" data-t="c4">CASADO CHINO</button><button class="chip" data-t="c5">ARROZ EN SALSA</button><button class="chip" data-t="c6">CHOP SUEY EN SALSA</button><button class="chip" data-t="c7">CHOP SUEY SECO</button><button class="chip" data-t="c8">A LA PLANCHA</button><button class="chip" data-t="c9">EXTRAS</button></nav>
+<main><section class="cat" id="c0"><div class="cat-head"><span class="ghost">01</span><b>CASADOS</b><span>套餐</span></div><div class="item"><div class="iname">A1. Arroz cantones con bistec encebollado (煎牛排)</div><div class="prows"><div class="prow [object Object]" data-key="A1. Bistec encebollado / 煎牛排" data-price="4500"><span class="pprice">₡4,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="A1. Bistec encebollado / 煎牛排">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">A2. Arroz cantones con bistec empanizado (炸牛排)</div><div class="prows"><div class="prow [object Object]" data-key="A2. Bistec empanizado / 炸牛排" data-price="4500"><span class="pprice">₡4,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="A2. Bistec empanizado / 炸牛排">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">A3. Arroz cantones con filet de pollo a la plancha (煎鸡扒)</div><div class="prows"><div class="prow [object Object]" data-key="A3. Pollo a la plancha / 煎鸡扒" data-price="4000"><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="A3. Pollo a la plancha / 煎鸡扒">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">A4. Arroz cantones con filet de pollo empanizado (炸鸡扒)</div><div class="prows"><div class="prow [object Object]" data-key="A4. Pollo empanizado / 炸鸡扒" data-price="4000"><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="A4. Pollo empanizado / 炸鸡扒">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">A5. Arroz cantones con filet de pescado al ajillo (煎鱼排)</div><div class="prows"><div class="prow [object Object]" data-key="A5. Pescado al ajillo / 煎鱼排" data-price="4000"><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="A5. Pescado al ajillo / 煎鱼排">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">A6. Arroz cantones con filet de pescado empanizado (炸鱼扒)</div><div class="prows"><div class="prow [object Object]" data-key="A6. Pescado empanizado / 炸鱼扒" data-price="4000"><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="A6. Pescado empanizado / 炸鱼扒">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">A7. Arroz cantones con chuleta de cerdo encebollado (煎猪排)</div><div class="prows"><div class="prow [object Object]" data-key="A7. Chuleta encebollada / 煎猪排" data-price="4500"><span class="pprice">₡4,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="A7. Chuleta encebollada / 煎猪排">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">A8. Arroz cantones con camarones empanizados (炸虾)</div><div class="prows"><div class="prow [object Object]" data-key="A8. Camarones empanizados / 炸虾" data-price="4500"><span class="pprice">₡4,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="A8. Camarones empanizados / 炸虾">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">A9. Arroz cantones con camarones al ajillo (煎虾)</div><div class="prows"><div class="prow [object Object]" data-key="A9. Camarones al ajillo / 煎虾" data-price="4000"><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="A9. Camarones al ajillo / 煎虾">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">A10. Arroz cantones con chuleta de cerdo empanizado (炸猪扒)</div><div class="prows"><div class="prow [object Object]" data-key="A10. Chuleta empanizada / 炸猪扒" data-price="4000"><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="A10. Chuleta empanizada / 炸猪扒">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div></section><section class="cat" id="c1"><div class="cat-head"><span class="ghost">02</span><b>ENTRADAS</b><span>小吃</span></div><div class="item"><div class="iname">1. Papas a la francesa (炸薯条)</div><div class="prows"><div class="prow [object Object]" data-key="1. Papas a la francesa / 炸薯条" data-price="1500"><span class="pprice">₡1,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="1. Papas a la francesa / 炸薯条">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">2. Alitas de pollo fritas (炸鸡翅 10只)</div><div class="prows"><div class="prow [object Object]" data-key="2. Alitas de pollo (10pcs) / 炸鸡翅 (10只)" data-price="4000"><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="2. Alitas de pollo (10pcs) / 炸鸡翅 (10只)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">3. Taco chino con salsa agridulce (炸春卷 3个)</div><div class="prows"><div class="prow [object Object]" data-key="3. Taco chino (3pcs) / 炸春卷 (3个)" data-price="2300"><span class="pprice">₡2,300</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="3. Taco chino (3pcs) / 炸春卷 (3个)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div></section><section class="cat" id="c2"><div class="cat-head"><span class="ghost">03</span><b>SOPAS</b><span>汤类</span></div><div class="item"><div class="iname">4. Sopa especial de la casa (招牌汤)</div><div class="desc">lechón, jamón, pollo, carne de res y verduras</div><div class="prows"><div class="prow [object Object]" data-key="4. Sopa especial de la casa / 招牌汤" data-price="3500"><span class="pprice">₡3,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="4. Sopa especial de la casa / 招牌汤">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">5. Sopa de pollo con verduras (鸡肉汤)</div><div class="prows"><div class="prow [object Object]" data-key="5. Sopa de pollo / 鸡肉汤" data-price="3500"><span class="pprice">₡3,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="5. Sopa de pollo / 鸡肉汤">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">6. Sopa de res con verduras (牛肉汤)</div><div class="prows"><div class="prow [object Object]" data-key="6. Sopa de res / 牛肉汤" data-price="4000"><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="6. Sopa de res / 牛肉汤">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">7. Sopa de mariscos con verduras (海鲜汤)</div><div class="prows"><div class="prow [object Object]" data-key="7. Sopa de mariscos / 海鲜汤" data-price="4000"><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="7. Sopa de mariscos / 海鲜汤">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div></section><section class="cat" id="c3"><div class="cat-head"><span class="ghost">04</span><b>ARROZ FRITO</b><span>炒饭</span></div><div class="item"><div class="iname">8. Arroz frito con vegetales (蔬菜炒饭)</div><div class="prows"><div class="prow [object Object]" data-key="8. Arroz frito con vegetales (Mediano) / 蔬菜炒饭 (中)" data-price="2500"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="8. Arroz frito con vegetales (Mediano) / 蔬菜炒饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="8. Arroz frito con vegetales (Grande) / 蔬菜炒饭 (大)" data-price="3500"><span class="plabel">Grande / 大</span><span class="pprice">₡3,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="8. Arroz frito con vegetales (Grande) / 蔬菜炒饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">9. Arroz frito de la casa (招牌炒饭)</div><div class="prows"><div class="prow [object Object]" data-key="9. Arroz frito de la casa (Mediano) / 招牌炒饭 (中)" data-price="3500"><span class="plabel">Mediano / 中</span><span class="pprice">₡3,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="9. Arroz frito de la casa (Mediano) / 招牌炒饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="9. Arroz frito de la casa (Grande) / 招牌炒饭 (大)" data-price="4500"><span class="plabel">Grande / 大</span><span class="pprice">₡4,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="9. Arroz frito de la casa (Grande) / 招牌炒饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">10. Arroz cantones especial (广东炒饭)</div><div class="prows"><div class="prow [object Object]" data-key="10. Arroz cantones (Mediano) / 广东炒饭 (中)" data-price="2500"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="10. Arroz cantones (Mediano) / 广东炒饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="10. Arroz cantones (Grande) / 广东炒饭 (大)" data-price="3500"><span class="plabel">Grande / 大</span><span class="pprice">₡3,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="10. Arroz cantones (Grande) / 广东炒饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">11. Arroz frito con pollo (鸡肉炒饭)</div><div class="prows"><div class="prow [object Object]" data-key="11. Arroz frito con pollo (Mediano) / 鸡肉炒饭 (中)" data-price="2500"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="11. Arroz frito con pollo (Mediano) / 鸡肉炒饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="11. Arroz frito con pollo (Grande) / 鸡肉炒饭 (大)" data-price="3400"><span class="plabel">Grande / 大</span><span class="pprice">₡3,400</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="11. Arroz frito con pollo (Grande) / 鸡肉炒饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">12. Arroz frito con pollo y camarones (鸡肉虾仁炒饭)</div><div class="prows"><div class="prow [object Object]" data-key="12. Arroz frito con pollo y camarones (Mediano) / 鸡虾炒饭 (中)" data-price="3000"><span class="plabel">Mediano / 中</span><span class="pprice">₡3,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="12. Arroz frito con pollo y camarones (Mediano) / 鸡虾炒饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="12. Arroz frito con pollo y camarones (Grande) / 鸡虾炒饭 (大)" data-price="4000"><span class="plabel">Grande / 大</span><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="12. Arroz frito con pollo y camarones (Grande) / 鸡虾炒饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">13. Arroz frito con lechón (叉烧炒饭)</div><div class="prows"><div class="prow [object Object]" data-key="13. Arroz frito con lechón (Mediano) / 叉烧炒饭 (中)" data-price="2500"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="13. Arroz frito con lechón (Mediano) / 叉烧炒饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="13. Arroz frito con lechón (Grande) / 叉烧炒饭 (大)" data-price="3400"><span class="plabel">Grande / 大</span><span class="pprice">₡3,400</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="13. Arroz frito con lechón (Grande) / 叉烧炒饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">14. Arroz frito con camarones (虾仁炒饭)</div><div class="prows"><div class="prow [object Object]" data-key="14. Arroz frito con camarones (Mediano) / 虾仁炒饭 (中)" data-price="2800"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="14. Arroz frito con camarones (Mediano) / 虾仁炒饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="14. Arroz frito con camarones (Grande) / 虾仁炒饭 (大)" data-price="3800"><span class="plabel">Grande / 大</span><span class="pprice">₡3,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="14. Arroz frito con camarones (Grande) / 虾仁炒饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">15. Arroz frito con carne de res (牛肉炒饭)</div><div class="prows"><div class="prow [object Object]" data-key="15. Arroz frito con carne de res (Mediano) / 牛肉炒饭 (中)" data-price="2800"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="15. Arroz frito con carne de res (Mediano) / 牛肉炒饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="15. Arroz frito con carne de res (Grande) / 牛肉炒饭 (大)" data-price="3800"><span class="plabel">Grande / 大</span><span class="pprice">₡3,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="15. Arroz frito con carne de res (Grande) / 牛肉炒饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">16. Arroz frito con chorizo chino (腊肠炒饭)</div><div class="prows"><div class="prow [object Object]" data-key="16. Arroz frito con chorizo chino (Mediano) / 腊肠炒饭 (中)" data-price="2700"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="16. Arroz frito con chorizo chino (Mediano) / 腊肠炒饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="16. Arroz frito con chorizo chino (Grande) / 腊肠炒饭 (大)" data-price="3700"><span class="plabel">Grande / 大</span><span class="pprice">₡3,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="16. Arroz frito con chorizo chino (Grande) / 腊肠炒饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">17. Arroz frito con mariscos (海鲜炒饭)</div><div class="prows"><div class="prow [object Object]" data-key="17. Arroz frito con mariscos (Grande) / 海鲜炒饭 (大)" data-price="5500"><span class="plabel">Grande / 大</span><span class="pprice">₡5,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="17. Arroz frito con mariscos (Grande) / 海鲜炒饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div></section><section class="cat" id="c4"><div class="cat-head"><span class="ghost">05</span><b>CASADO CHINO</b><span>中式套餐</span></div><div class="item"><div class="iname">A. Arroz cantones y chop suey en salsa (广东饭 + 湿炒面)</div><div class="prows"><div class="prow [object Object]" data-key="18-A. Casado chino: Arroz y chop suey en salsa (Mediano) / 广东饭+湿炒面 (中)" data-price="3500"><span class="plabel">Mediano / 中</span><span class="pprice">₡3,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="18-A. Casado chino: Arroz y chop suey en salsa (Mediano) / 广东饭+湿炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="18-A. Casado chino: Arroz y chop suey en salsa (Grande) / 广东饭+湿炒面 (大)" data-price="4000"><span class="plabel">Grande / 大</span><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="18-A. Casado chino: Arroz y chop suey en salsa (Grande) / 广东饭+湿炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">B. Arroz cantones y chop suey seco (广东饭 + 干炒面)</div><div class="prows"><div class="prow [object Object]" data-key="18-B. Casado chino: Arroz y chop suey seco (Mediano) / 广东饭+干炒面 (中)" data-price="3500"><span class="plabel">Mediano / 中</span><span class="pprice">₡3,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="18-B. Casado chino: Arroz y chop suey seco (Mediano) / 广东饭+干炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="18-B. Casado chino: Arroz y chop suey seco (Grande) / 广东饭+干炒面 (大)" data-price="4000"><span class="plabel">Grande / 大</span><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="18-B. Casado chino: Arroz y chop suey seco (Grande) / 广东饭+干炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div></section><section class="cat" id="c5"><div class="cat-head"><span class="ghost">06</span><b>ARROZ EN SALSA</b><span>酱汁饭</span></div><div class="item"><div class="iname">19. Arroz en salsa especial de la casa (招牌酱汁饭)</div><div class="prows"><div class="prow [object Object]" data-key="19. Arroz en salsa especial (Mediano) / 招牌酱汁饭 (中)" data-price="2700"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="19. Arroz en salsa especial (Mediano) / 招牌酱汁饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="19. Arroz en salsa especial (Grande) / 招牌酱汁饭 (大)" data-price="3700"><span class="plabel">Grande / 大</span><span class="pprice">₡3,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="19. Arroz en salsa especial (Grande) / 招牌酱汁饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">20. Arroz en salsa con pollo y vegetales (鸡肉酱汁饭)</div><div class="prows"><div class="prow [object Object]" data-key="20. Arroz en salsa con pollo (Mediano) / 鸡肉酱汁饭 (中)" data-price="2700"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="20. Arroz en salsa con pollo (Mediano) / 鸡肉酱汁饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="20. Arroz en salsa con pollo (Grande) / 鸡肉酱汁饭 (大)" data-price="3700"><span class="plabel">Grande / 大</span><span class="pprice">₡3,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="20. Arroz en salsa con pollo (Grande) / 鸡肉酱汁饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">21. Arroz en salsa con lechón y vegetales (叉烧酱汁饭)</div><div class="prows"><div class="prow [object Object]" data-key="21. Arroz en salsa con lechón (Mediano) / 叉烧酱汁饭 (中)" data-price="2700"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="21. Arroz en salsa con lechón (Mediano) / 叉烧酱汁饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="21. Arroz en salsa con lechón (Grande) / 叉烧酱汁饭 (大)" data-price="3700"><span class="plabel">Grande / 大</span><span class="pprice">₡3,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="21. Arroz en salsa con lechón (Grande) / 叉烧酱汁饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">22. Arroz en salsa con chorizo chino (腊肠酱汁饭)</div><div class="prows"><div class="prow [object Object]" data-key="22. Arroz en salsa con chorizo chino (Mediano) / 腊肠酱汁饭 (中)" data-price="2800"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="22. Arroz en salsa con chorizo chino (Mediano) / 腊肠酱汁饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="22. Arroz en salsa con chorizo chino (Grande) / 腊肠酱汁饭 (大)" data-price="3800"><span class="plabel">Grande / 大</span><span class="pprice">₡3,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="22. Arroz en salsa con chorizo chino (Grande) / 腊肠酱汁饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">23. Arroz en salsa con carne de res (牛肉酱汁饭)</div><div class="prows"><div class="prow [object Object]" data-key="23. Arroz en salsa con carne de res (Mediano) / 牛肉酱汁饭 (中)" data-price="2800"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="23. Arroz en salsa con carne de res (Mediano) / 牛肉酱汁饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="23. Arroz en salsa con carne de res (Grande) / 牛肉酱汁饭 (大)" data-price="3800"><span class="plabel">Grande / 大</span><span class="pprice">₡3,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="23. Arroz en salsa con carne de res (Grande) / 牛肉酱汁饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">24. Arroz en salsa con camarones (虾仁酱汁饭)</div><div class="prows"><div class="prow [object Object]" data-key="24. Arroz en salsa con camarones (Mediano) / 虾仁酱汁饭 (中)" data-price="3000"><span class="plabel">Mediano / 中</span><span class="pprice">₡3,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="24. Arroz en salsa con camarones (Mediano) / 虾仁酱汁饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="24. Arroz en salsa con camarones (Grande) / 虾仁酱汁饭 (大)" data-price="4000"><span class="plabel">Grande / 大</span><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="24. Arroz en salsa con camarones (Grande) / 虾仁酱汁饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">25. Arroz en salsa con mariscos (海鲜酱汁饭)</div><div class="prows"><div class="prow [object Object]" data-key="25. Arroz en salsa con mariscos (Grande) / 海鲜酱汁饭 (大)" data-price="5500"><span class="plabel">Grande / 大</span><span class="pprice">₡5,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="25. Arroz en salsa con mariscos (Grande) / 海鲜酱汁饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">26. Arroz en salsa con pollo y camarones (鸡肉虾仁酱汁饭)</div><div class="prows"><div class="prow [object Object]" data-key="26. Arroz en salsa con pollo y camarones (Mediano) / 鸡虾酱汁饭 (中)" data-price="3000"><span class="plabel">Mediano / 中</span><span class="pprice">₡3,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="26. Arroz en salsa con pollo y camarones (Mediano) / 鸡虾酱汁饭 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="26. Arroz en salsa con pollo y camarones (Grande) / 鸡虾酱汁饭 (大)" data-price="4000"><span class="plabel">Grande / 大</span><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="26. Arroz en salsa con pollo y camarones (Grande) / 鸡虾酱汁饭 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div></section><section class="cat" id="c6"><div class="cat-head"><span class="ghost">07</span><b>CHOP SUEY EN SALSA</b><span>湿炒面</span></div><div class="item"><div class="iname">27. Chop suey especial de la casa (招牌湿炒面)</div><div class="prows"><div class="prow [object Object]" data-key="27. Chop suey especial en salsa (Mediano) / 招牌湿炒面 (中)" data-price="2700"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="27. Chop suey especial en salsa (Mediano) / 招牌湿炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="27. Chop suey especial en salsa (Grande) / 招牌湿炒面 (大)" data-price="3700"><span class="plabel">Grande / 大</span><span class="pprice">₡3,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="27. Chop suey especial en salsa (Grande) / 招牌湿炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">28. Chop suey en salsa con pollo (鸡肉湿炒面)</div><div class="prows"><div class="prow [object Object]" data-key="28. Chop suey en salsa con pollo (Mediano) / 鸡肉湿炒面 (中)" data-price="2700"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="28. Chop suey en salsa con pollo (Mediano) / 鸡肉湿炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="28. Chop suey en salsa con pollo (Grande) / 鸡肉湿炒面 (大)" data-price="3700"><span class="plabel">Grande / 大</span><span class="pprice">₡3,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="28. Chop suey en salsa con pollo (Grande) / 鸡肉湿炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">29. Chop suey en salsa con pollo y camarones (鸡肉虾仁湿炒面)</div><div class="prows"><div class="prow [object Object]" data-key="29. Chop suey en salsa con pollo y camarones (Mediano) / 鸡虾湿炒面 (中)" data-price="3000"><span class="plabel">Mediano / 中</span><span class="pprice">₡3,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="29. Chop suey en salsa con pollo y camarones (Mediano) / 鸡虾湿炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="29. Chop suey en salsa con pollo y camarones (Grande) / 鸡虾湿炒面 (大)" data-price="4000"><span class="plabel">Grande / 大</span><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="29. Chop suey en salsa con pollo y camarones (Grande) / 鸡虾湿炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">30. Chop suey en salsa con lechón (叉烧湿炒面)</div><div class="prows"><div class="prow [object Object]" data-key="30. Chop suey en salsa con lechón (Mediano) / 叉烧湿炒面 (中)" data-price="2700"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="30. Chop suey en salsa con lechón (Mediano) / 叉烧湿炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="30. Chop suey en salsa con lechón (Grande) / 叉烧湿炒面 (大)" data-price="3700"><span class="plabel">Grande / 大</span><span class="pprice">₡3,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="30. Chop suey en salsa con lechón (Grande) / 叉烧湿炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">31. Chop suey en salsa con carne de res (牛肉湿炒面)</div><div class="prows"><div class="prow [object Object]" data-key="31. Chop suey en salsa con carne de res (Mediano) / 牛肉湿炒面 (中)" data-price="2800"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="31. Chop suey en salsa con carne de res (Mediano) / 牛肉湿炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="31. Chop suey en salsa con carne de res (Grande) / 牛肉湿炒面 (大)" data-price="3800"><span class="plabel">Grande / 大</span><span class="pprice">₡3,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="31. Chop suey en salsa con carne de res (Grande) / 牛肉湿炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">32. Chop suey en salsa con chorizo chino (腊肠湿炒面)</div><div class="prows"><div class="prow [object Object]" data-key="32. Chop suey en salsa con chorizo chino (Mediano) / 腊肠湿炒面 (中)" data-price="2800"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="32. Chop suey en salsa con chorizo chino (Mediano) / 腊肠湿炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="32. Chop suey en salsa con chorizo chino (Grande) / 腊肠湿炒面 (大)" data-price="3800"><span class="plabel">Grande / 大</span><span class="pprice">₡3,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="32. Chop suey en salsa con chorizo chino (Grande) / 腊肠湿炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">33. Chop suey en salsa con camarones (虾仁湿炒面)</div><div class="prows"><div class="prow [object Object]" data-key="33. Chop suey en salsa con camarones (Mediano) / 虾仁湿炒面 (中)" data-price="3000"><span class="plabel">Mediano / 中</span><span class="pprice">₡3,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="33. Chop suey en salsa con camarones (Mediano) / 虾仁湿炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="33. Chop suey en salsa con camarones (Grande) / 虾仁湿炒面 (大)" data-price="4000"><span class="plabel">Grande / 大</span><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="33. Chop suey en salsa con camarones (Grande) / 虾仁湿炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">34. Chop suey en salsa con mariscos (海鲜湿炒面)</div><div class="prows"><div class="prow [object Object]" data-key="34. Chop suey en salsa con mariscos (Grande) / 海鲜湿炒面 (大)" data-price="5500"><span class="plabel">Grande / 大</span><span class="pprice">₡5,500</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="34. Chop suey en salsa con mariscos (Grande) / 海鲜湿炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div></section><section class="cat" id="c7"><div class="cat-head"><span class="ghost">08</span><b>CHOP SUEY SECO</b><span>干炒面</span></div><div class="item"><div class="iname">35. Chop suey seco con pollo (鸡肉干炒面)</div><div class="prows"><div class="prow [object Object]" data-key="35. Chop suey seco con pollo (Mediano) / 鸡肉干炒面 (中)" data-price="2700"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="35. Chop suey seco con pollo (Mediano) / 鸡肉干炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="35. Chop suey seco con pollo (Grande) / 鸡肉干炒面 (大)" data-price="3700"><span class="plabel">Grande / 大</span><span class="pprice">₡3,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="35. Chop suey seco con pollo (Grande) / 鸡肉干炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">36. Chop suey seco con pollo y camarones (鸡肉虾仁干炒面)</div><div class="prows"><div class="prow [object Object]" data-key="36. Chop suey seco con pollo y camarones (Mediano) / 鸡虾干炒面 (中)" data-price="3000"><span class="plabel">Mediano / 中</span><span class="pprice">₡3,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="36. Chop suey seco con pollo y camarones (Mediano) / 鸡虾干炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="36. Chop suey seco con pollo y camarones (Grande) / 鸡虾干炒面 (大)" data-price="4000"><span class="plabel">Grande / 大</span><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="36. Chop suey seco con pollo y camarones (Grande) / 鸡虾干炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">37. Chop suey seco con lechón (叉烧干炒面)</div><div class="prows"><div class="prow [object Object]" data-key="37. Chop suey seco con lechón (Mediano) / 叉烧干炒面 (中)" data-price="2700"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="37. Chop suey seco con lechón (Mediano) / 叉烧干炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="37. Chop suey seco con lechón (Grande) / 叉烧干炒面 (大)" data-price="3700"><span class="plabel">Grande / 大</span><span class="pprice">₡3,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="37. Chop suey seco con lechón (Grande) / 叉烧干炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">38. Chop suey seco con carne de res (牛肉干炒面)</div><div class="prows"><div class="prow [object Object]" data-key="38. Chop suey seco con carne de res (Mediano) / 牛肉干炒面 (中)" data-price="2800"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="38. Chop suey seco con carne de res (Mediano) / 牛肉干炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="38. Chop suey seco con carne de res (Grande) / 牛肉干炒面 (大)" data-price="3800"><span class="plabel">Grande / 大</span><span class="pprice">₡3,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="38. Chop suey seco con carne de res (Grande) / 牛肉干炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">39. Chop suey seco con chorizo chino (腊肠干炒面)</div><div class="prows"><div class="prow [object Object]" data-key="39. Chop suey seco con chorizo chino (Mediano) / 腊肠干炒面 (中)" data-price="2800"><span class="plabel">Mediano / 中</span><span class="pprice">₡2,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="39. Chop suey seco con chorizo chino (Mediano) / 腊肠干炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="39. Chop suey seco con chorizo chino (Grande) / 腊肠干炒面 (大)" data-price="3700"><span class="plabel">Grande / 大</span><span class="pprice">₡3,700</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="39. Chop suey seco con chorizo chino (Grande) / 腊肠干炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">40. Chop suey seco con camarones (虾仁干炒面)</div><div class="prows"><div class="prow [object Object]" data-key="40. Chop suey seco con camarones (Mediano) / 虾仁干炒面 (中)" data-price="3000"><span class="plabel">Mediano / 中</span><span class="pprice">₡3,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="40. Chop suey seco con camarones (Mediano) / 虾仁干炒面 (中)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div><div class="prow [object Object]" data-key="40. Chop suey seco con camarones (Grande) / 虾仁干炒面 (大)" data-price="4000"><span class="plabel">Grande / 大</span><span class="pprice">₡4,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="40. Chop suey seco con camarones (Grande) / 虾仁干炒面 (大)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div></section><section class="cat" id="c8"><div class="cat-head"><span class="ghost">09</span><b>ARROZ A LA PLANCHA</b><span>炸米</span></div><div class="item"><div class="iname">41. Arroz tostado a la plancha especial (招牌炸米)</div><div class="prows"><div class="prow [object Object]" data-key="41. Arroz tostado a la plancha especial / 招牌炸米" data-price="5800"><span class="pprice">₡5,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="41. Arroz tostado a la plancha especial / 招牌炸米">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">42. Arroz tostado a la plancha con camarones (虾仁炸米)</div><div class="prows"><div class="prow [object Object]" data-key="42. Arroz tostado a la plancha con camarones / 虾仁炸米" data-price="6800"><span class="pprice">₡6,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="42. Arroz tostado a la plancha con camarones / 虾仁炸米">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">43. Arroz tostado a la plancha con mariscos (海鲜炸米)</div><div class="prows"><div class="prow [object Object]" data-key="43. Arroz tostado a la plancha con mariscos / 海鲜炸米" data-price="6000"><span class="pprice">₡6,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="43. Arroz tostado a la plancha con mariscos / 海鲜炸米">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">44. Arroz tostado a la plancha con carne de res (牛肉炸米)</div><div class="prows"><div class="prow [object Object]" data-key="44. Arroz tostado a la plancha con carne de res / 牛肉炸米" data-price="6000"><span class="pprice">₡6,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="44. Arroz tostado a la plancha con carne de res / 牛肉炸米">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">45. Arroz tostado a la plancha con pollo (鸡肉炸米)</div><div class="prows"><div class="prow [object Object]" data-key="45. Arroz tostado a la plancha con pollo / 鸡肉炸米" data-price="5800"><span class="pprice">₡5,800</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="45. Arroz tostado a la plancha con pollo / 鸡肉炸米">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">46. Arroz tostado a la plancha con pollo y camarones (鸡肉虾仁炸米)</div><div class="prows"><div class="prow [object Object]" data-key="46. Arroz tostado a la plancha con pollo y camarones / 鸡虾炸米" data-price="6000"><span class="pprice">₡6,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="46. Arroz tostado a la plancha con pollo y camarones / 鸡虾炸米">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div></section><section class="cat" id="c9"><div class="cat-head"><span class="ghost">10</span><b>EXTRAS</b><span>附加</span></div><div class="item"><div class="iname">Extra camarones (5 unidades) (加虾 5只)</div><div class="prows"><div class="prow [object Object]" data-key="Extra camarones (5pcs) / 加虾 (5只)" data-price="1000"><span class="pprice">₡1,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="Extra camarones (5pcs) / 加虾 (5只)">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">Extra chorizo chino (加中国香肠)</div><div class="prows"><div class="prow [object Object]" data-key="Extra chorizo chino / 加中国香肠" data-price="1000"><span class="pprice">₡1,000</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="Extra chorizo chino / 加中国香肠">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div><div class="item"><div class="iname">Envase extra (加饭盒)</div><div class="prows"><div class="prow [object Object]" data-key="Envase extra / 加饭盒" data-price="100"><span class="pprice">₡100</span><div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button><span class="qty" data-qty="Envase extra / 加饭盒">0</span><button class="inc" data-act="inc" aria-label="mas">+</button></div></div></div></div></section></main>
+<footer class="foot">COMIDA CHINA · Tel 6098-8889 · Pedidos por WhatsApp</footer>
+</div>
+<div id="bar" onclick="openSheet()" role="button"><div class="binfo"><span>已选 <span id="bar-count">0</span> 件</span><b id="bar-total">₡0</b></div><span id="bar-go">Pedir · 查看订单</span></div>
+<div id="scrim"></div>
+<div id="sheet"><div class="handle"></div><h2>Tu pedido · 你的订单</h2><div id="sheet-list"></div><div class="sheet-foot"><div><div class="stfl">Total / 总金额（参考）</div><div id="sheet-total">₡0</div></div><div id="sheet-actions"><button id="clear-btn" onclick="clearCart()">清空</button><button id="submit-btn" onclick="submitOrder()">确认下单 / Pedir</button></div></div></div>
+</div>
+<script>
+// ==================== 防恶意点餐安全配置 ====================
+const SECURITY_CONFIG = { SUBMIT_COOLDOWN: 30, MIN_ORDER_AMOUNT: 1, MAX_ORDER_AMOUNT: 20 };
+function getDeviceId(){
+  let d = localStorage.getItem('guest_device_id');
+  if (!d){ d = 'DEV-' + Math.random().toString(36).substr(2,9) + '-' + Date.now(); localStorage.setItem('guest_device_id', d); }
+  return d;
+}
+function checkCooldown(){
+  const last = localStorage.getItem('last_submit_time');
+  if (last){ const el = (Date.now() - parseInt(last,10))/1000; if (el < SECURITY_CONFIG.SUBMIT_COOLDOWN) return Math.ceil(SECURITY_CONFIG.SUBMIT_COOLDOWN - el); }
+  return 0;
+}
+function disableSubmitButton(btn, sec){
+  if (!btn) return;
+  btn.disabled = true;
+  let r = sec;
+  const timer = setInterval(function(){
+    btn.textContent = '请稍候 (' + r + 's)'; r--;
+    if (r < 0){ clearInterval(timer); btn.disabled = false; btn.textContent = '确认下单 / Pedir'; }
+  }, 1000);
+}
+function getTableNo(){
+  const raw = new URLSearchParams(window.location.search).get('table');
+  if (!raw) return null;
+  return raw.replace(/[^\w\-]/g,'').slice(0,10) || null;
+}
+(function(){ const t = getTableNo(); const b = document.getElementById('mesa'); if (b) b.textContent = t ? ('Mesa ' + t + ' · 桌号') : 'Sin mesa · 桌号未识别'; })();
 
-    <div class="container" data-page-node-id="467szmktEh3r7qSa9FkgUE">
+// ==================== 购物车 ====================
+const RM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const CART = {};
+const money = function(n){ return '₡' + n.toLocaleString('en-US'); };
+function counts(){ let c=0,t=0; for (const k in CART){ c+=CART[k].qty; t+=CART[k].qty*CART[k].price; } return {c:c,t:t}; }
+function syncRow(key){
+  const rec = CART[key];
+  document.querySelectorAll('[data-qty="' + key + '"]').forEach(function(el){ el.textContent = rec ? rec.qty : 0; });
+  document.querySelectorAll('[data-key="' + key + '"]').forEach(function(el){ el.classList.toggle('has', !!rec); });
+}
+function change(key, delta, price){
+  let rec = CART[key];
+  if (!rec){ if (delta < 0) return; rec = CART[key] = { qty: 0, price: price || 0 }; }
+  if (price) rec.price = price;
+  rec.qty += delta;
+  if (rec.qty <= 0){ delete CART[key]; }
+  syncRow(key); updateBar();
+}
+function updateBar(){
+  const s = counts();
+  document.getElementById('bar-count').textContent = s.c;
+  document.getElementById('bar-total').textContent = money(s.t);
+  document.getElementById('bar').classList.toggle('off', s.c === 0);
+  const st = document.getElementById('sheet-total'); if (st) st.textContent = money(s.t);
+  if (!RM && s.c > 0){
+    const b = document.getElementById('bar-count');
+    b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+  }
+}
+document.addEventListener('click', function(e){
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const w = b.closest('[data-key]'); if (!w) return;
+  change(w.dataset.key, b.dataset.act === 'inc' ? 1 : -1, parseFloat(w.dataset.price) || 0);
+});
 
-        <!-- CASADOS -->
-        <div class="menu-category" data-page-node-id="1vdjTtEDSF7WzLm4BF3lkA">CASADOS (CON PAPAS Y ENSALADA) / 套餐 (配薯条和沙拉)</div>
-        
-        <div class="menu-item" data-page-node-id="sbXaapz0cPHpHhKPMQkOB9"><div class="item-info" data-page-node-id="9HqlqCUWxhKkKDoZ7aUAo2"><div class="item-title" data-page-node-id="REnjpnXdgBIrnL25CWqSu0">A1. Arroz cantones con bistec encebollado <span class="cn-name" data-page-node-id="61RgJBUQIFNqZZBLXNpj93">(煎牛排)</span></div><div class="item-price" data-page-node-id="SdrR3sYAEAD3AbGZbT8v5u">₡4,500</div></div><button class="btn-add" onclick="addToCart('A1. Bistec encebollado / 煎牛排', 4500)" data-page-node-id="75CbJDs1HHoJuyUbyTpoC1">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="8plxq3ZaFBCOei0w49YNYM"><div class="item-info" data-page-node-id="5oorrmJPRH47LMDdJk5yQE"><div class="item-title" data-page-node-id="CZOUeycyQdGli6WP2wT1ZG">A2. Arroz cantones con bistec empanizado <span class="cn-name" data-page-node-id="pCpvI7zKA6XxiuEAvBIJJI">(炸牛排)</span></div><div class="item-price" data-page-node-id="c39WKZtKVzbo5E0PuUhinj">₡4,500</div></div><button class="btn-add" onclick="addToCart('A2. Bistec empanizado / 炸牛排', 4500)" data-page-node-id="8bnxikheqDDFMBH5Nn8KGi">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="kNMg1Hulqq7BqMJFODMA3J"><div class="item-info" data-page-node-id="coolE61TZCTgdvDmUGjRbs"><div class="item-title" data-page-node-id="7WKHLZ970nNIYbJ60NHumF">A3. Arroz cantones con filet de pollo a la plancha <span class="cn-name" data-page-node-id="4H6Bhnzrhu668msKQXiYcF">(煎鸡扒)</span></div><div class="item-price" data-page-node-id="BDA73Vp6hhBUqKUARDdWAT">₡4,000</div></div><button class="btn-add" onclick="addToCart('A3. Pollo a la plancha / 煎鸡扒', 4000)" data-page-node-id="7kY2rW1S936FGAojlQFlfu">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="psHZ5ytHyFJW9AxhdXqwol"><div class="item-info" data-page-node-id="s1ELOd0V9HtD25IQfBLScM"><div class="item-title" data-page-node-id="1ZrIsWmCvCpD4SxXCSYGrO">A4. Arroz cantones con filet de pollo empanizado <span class="cn-name" data-page-node-id="7jKwGOhag4LFgHTgP8iPcd">(炸鸡扒)</span></div><div class="item-price" data-page-node-id="wPyebUcwpGbt1upCK8l1Et">₡4,000</div></div><button class="btn-add" onclick="addToCart('A4. Pollo empanizado / 炸鸡扒', 4000)" data-page-node-id="Xzdr4e3jJLFLuddjeNrWGM">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="ABvnTNuffukU8D8Rsa7iEg"><div class="item-info" data-page-node-id="KeUIn4nGoj2XTX5DmXV0I7"><div class="item-title" data-page-node-id="tF3uDqtyFIQH3dP1jyOLop">A5. Arroz cantones con filet de pescado al ajillo <span class="cn-name" data-page-node-id="kmdDw5lyuhza022pFgU6Tj">(煎鱼排)</span></div><div class="item-price" data-page-node-id="LSUZXpExAySTTm1A7rGIvD">₡4,000</div></div><button class="btn-add" onclick="addToCart('A5. Pescado al ajillo / 煎鱼排', 4000)" data-page-node-id="B7bbrGtulSkdtkLOnDk4y9">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="5EZMhlfNxMTxRP1hH8a1IL"><div class="item-info" data-page-node-id="RpFr8CD325ngtACEO6QfTB"><div class="item-title" data-page-node-id="TuCwraLMLAU7HV0Di484aI">A6. Arroz cantones con filet de pescado empanizado <span class="cn-name" data-page-node-id="6r4JgPbqaNXNgHQiCQ9Wdd">(炸鱼扒)</span></div><div class="item-price" data-page-node-id="zBrlWfm5Gf0of3FHlKQlsL">₡4,000</div></div><button class="btn-add" onclick="addToCart('A6. Pescado empanizado / 炸鱼扒', 4000)" data-page-node-id="iVcfZyCg4c6fGV1ACuWE9q">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="z1e93iPcfm0lACiGfZOiVl"><div class="item-info" data-page-node-id="fcXcprlT04VeekslMeGgh0"><div class="item-title" data-page-node-id="SrXH6vPmIbtF6pWmrqPTYh">A7. Arroz cantones con chuleta de cerdo encebollado <span class="cn-name" data-page-node-id="uPZQwXA1B9J0qrTTPBVIQ4">(煎猪排)</span></div><div class="item-price" data-page-node-id="Cq9IaCWRwGVo8ihhpjiPKn">₡4,500</div></div><button class="btn-add" onclick="addToCart('A7. Chuleta encebollada / 煎猪排', 4500)" data-page-node-id="6ofeu0Pw5h2eOSg8ivZm90">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="865XeeoWIixcOaTZsoE2ev"><div class="item-info" data-page-node-id="0LFgRi5Qa6R738C4UJ5Hbe"><div class="item-title" data-page-node-id="H38wq9OKDjARMLIn11YzoP">A8. Arroz cantones con camarones empanizados <span class="cn-name" data-page-node-id="lKNz5vnmjecDBn4PU3xhLF">(炸虾)</span></div><div class="item-price" data-page-node-id="YDPdoBdDwlmJT0hIGEWwqt">₡4,500</div></div><button class="btn-add" onclick="addToCart('A8. Camarones empanizados / 炸虾', 4500)" data-page-node-id="CRnjg6wxNOGrkeAiazDwUC">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="jkzjv4Wp68TUyvOqzIRFX8"><div class="item-info" data-page-node-id="LBSuZBaTEfeSxkzMPg2L10"><div class="item-title" data-page-node-id="u8KiJROv9lzL8MSGe6AJDb">A9. Arroz cantones con camarones al ajillo <span class="cn-name" data-page-node-id="KQnxWDYKwTZ8r3F38V5tnm">(煎虾)</span></div><div class="item-price" data-page-node-id="NJXOjhR8owhf4FDH5sTCNC">₡4,000</div></div><button class="btn-add" onclick="addToCart('A9. Camarones al ajillo / 煎虾', 4000)" data-page-node-id="wHreymneMfA8n1eSkm8fbF">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="y1SWPPr4nS7O3fjBAGd54v"><div class="item-info" data-page-node-id="tvBHGtXG0DUWYmfZ8FQ5FD"><div class="item-title" data-page-node-id="pys6GzmP04jBtR4oFC3S0Q">A10. Arroz cantones con chuleta de cerdo empanizado <span class="cn-name" data-page-node-id="8XQ9STF3PZtyIK9Luikzhg">(炸猪扒)</span></div><div class="item-price" data-page-node-id="b2tNzD0s7nnMj531pqZHms">₡4,000</div></div><button class="btn-add" onclick="addToCart('A10. Chuleta empanizada / 炸猪扒', 4000)" data-page-node-id="oninEXmXpluET3L125X5pS">+ 点餐</button></div>
+// ==================== 底单（bottom sheet） ====================
+function openSheet(){
+  const list = document.getElementById('sheet-list');
+  const keys = Object.keys(CART);
+  list.innerHTML = keys.length ? keys.map(function(k){
+    const r = CART[k];
+    return '<div class="srow" data-key="' + esc(k) + '" data-price="' + r.price + '">' +
+      '<div class="sname">' + esc(k) + '<em>' + money(r.price) + '</em></div>' +
+      '<div class="st"><button class="dec" data-act="dec" aria-label="menos">−</button>' +
+      '<span class="qty" data-qty="' + esc(k) + '">' + r.qty + '</span>' +
+      '<button class="inc" data-act="inc" aria-label="mas">+</button></div></div>';
+  }).join('') : '<div class="sempty">还没有选菜 / Aún no ha elegido platos</div>';
+  document.getElementById('scrim').classList.add('on');
+  document.getElementById('sheet').classList.add('on');
+  updateBar();
+}
+function closeSheet(){
+  document.getElementById('scrim').classList.remove('on');
+  document.getElementById('sheet').classList.remove('on');
+}
+document.getElementById('scrim').addEventListener('click', closeSheet);
 
-        <!-- ENTRADAS -->
-        <div class="menu-category" data-page-node-id="QkWGleYKqbg5lWqta8qlaa">ENTRADAS / 小吃</div>
-        
-        <div class="menu-item" data-page-node-id="CBGvyJ16I2kDdQM63S2WHi"><div class="item-info" data-page-node-id="Q7DN6unNEYN1itmcXLiNmo"><div class="item-title" data-page-node-id="C8Z80BI4wFmJAdfmKDiJL9">1. Papas a la francesa <span class="cn-name" data-page-node-id="EMvHk0eRLmUJDAHPYatHTX">(炸薯条)</span></div><div class="item-price" data-page-node-id="X9Fr4JX3OGprT5W1FE8e3Z">₡1,500</div></div><button class="btn-add" onclick="addToCart('1. Papas a la francesa / 炸薯条', 1500)" data-page-node-id="MP7O97b3F8PjNreqvQ1Z5f">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="HU89itJZWx9cps0ScQ4InV"><div class="item-info" data-page-node-id="LF70xOWHybws5CC1O3p2Er"><div class="item-title" data-page-node-id="WRfZQWqcDkkZVfcJgKpmGY">2. Alitas de pollo fritas <span class="cn-name" data-page-node-id="727cZjCWDgFWnFSKyETAuH">(炸鸡翅 10只)</span></div><div class="item-price" data-page-node-id="QCsBOyvRFYFfxOlIFUenTP">₡4,000</div></div><button class="btn-add" onclick="addToCart('2. Alitas de pollo (10pcs) / 炸鸡翅 (10只)', 4000)" data-page-node-id="owCIgRcs3uTrZCDB4w4irE">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="4u4tslbr3ML2tGysoGPmVU"><div class="item-info" data-page-node-id="jhCFSRD0MBZKQS60Zu3dnf"><div class="item-title" data-page-node-id="9DpRe0Ww0LuXOJBOSGIVfR">3. Taco chino con salsa agridulce <span class="cn-name" data-page-node-id="KCGlod6d5TDfP6q7ePYRSl">(炸春卷 3个)</span></div><div class="item-price" data-page-node-id="38RmYmOpEDgDPkPsADcU8u">₡2,300</div></div><button class="btn-add" onclick="addToCart('3. Taco chino (3pcs) / 炸春卷 (3个)', 2300)" data-page-node-id="z5FWxOE1oXVdnFtRxWCrcR">+ 点餐</button></div>
+function clearCart(){
+  Object.keys(CART).forEach(function(k){ delete CART[k]; syncRow(k); });
+  updateBar();
+}
 
-        <!-- SOPAS -->
-        <div class="menu-category" data-page-node-id="XFRbfoJwDROLhi8SwNkkbs">SOPAS / 汤类</div>
-        
-        <div class="menu-item" data-page-node-id="aeCjkrDHwcfKMPoCndyApe"><div class="item-info" data-page-node-id="icjKXak4ABGhbNkU6sWdTT"><div class="item-title" data-page-node-id="2qW918HfUETyqpZCLmfvjy">4. Sopa especial de la casa <span class="cn-name" data-page-node-id="eEjSlC66z40np0Lxd8LRHQ">(招牌汤)</span></div><div class="item-desc" data-page-node-id="Fr8FbnLk3xczhnBEcOKCvT">lechón, jamón, pollo, carne de res y verduras</div><div class="item-price" data-page-node-id="EATCY6JwtQ0BrVVocxzZV2">₡3,500</div></div><button class="btn-add" onclick="addToCart('4. Sopa especial de la casa / 招牌汤', 3500)" data-page-node-id="kAwrAwcmhq0vtc1Z1HHogf">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="VKZkgWQVWW2I6hgtMuB9vY"><div class="item-info" data-page-node-id="QcIW9uVUpD9gOoImFxBxwB"><div class="item-title" data-page-node-id="LShZr3tph65cBJXT7acAS4">5. Sopa de pollo con verduras <span class="cn-name" data-page-node-id="b9JAV56TPax4UhfdCWqm6z">(鸡肉汤)</span></div><div class="item-price" data-page-node-id="LTyQ2h0QCskJwOdpvJBKME">₡3,500</div></div><button class="btn-add" onclick="addToCart('5. Sopa de pollo / 鸡肉汤', 3500)" data-page-node-id="exCa5iDP6UqH11Y4J3mqwe">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="rmxCQKOEA53Bl2sHO8AEM6"><div class="item-info" data-page-node-id="x0LkzIeO133SyAswLMOcia"><div class="item-title" data-page-node-id="idIhm578ZXxcHGY5o0BqAl">6. Sopa de res con verduras <span class="cn-name" data-page-node-id="gTEqcPyQvDFuBxLtvDyiQl">(牛肉汤)</span></div><div class="item-price" data-page-node-id="U4xb9kSc3H3UgJKss1VJyw">₡4,000</div></div><button class="btn-add" onclick="addToCart('6. Sopa de res / 牛肉汤', 4000)" data-page-node-id="GpYkzBl72U4DhT3PripOfH">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="OBql9tgtZE5LjqE97p6U4S"><div class="item-info" data-page-node-id="5w9Z5jXHrCJyFNX7YEJmzY"><div class="item-title" data-page-node-id="Mv2xCTRyyqxpmCYAMnLp4A">7. Sopa de mariscos con verduras <span class="cn-name" data-page-node-id="WwVHUsGYsm9AW0Zlixn4lh">(海鲜汤)</span></div><div class="item-price" data-page-node-id="ha8VqskRrkzZzmt8JtvsJf">₡4,000</div></div><button class="btn-add" onclick="addToCart('7. Sopa de mariscos / 海鲜汤', 4000)" data-page-node-id="g6Xoy09IclJRhUDve9DMsN">+ 点餐</button></div>
+// ==================== 分类导航 ====================
+(function(){
+  const app = document.getElementById('app');
+  const catEls = Array.prototype.slice.call(document.querySelectorAll('.cat'));
+  const chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+  chips.forEach(function(ch, i){
+    ch.addEventListener('click', function(){
+      catEls[i].scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'start' });
+    });
+  });
+  app.addEventListener('scroll', function(){
+    const at = app.scrollTop, base = app.getBoundingClientRect().top;
+    let idx = 0;
+    catEls.forEach(function(c, i){ if (c.getBoundingClientRect().top - base - 150 <= 0) idx = i; });
+    chips.forEach(function(c, i){ c.classList.toggle('on', i === idx); });
+  }, { passive: true });
+})();
 
-        <!-- ARROZ FRITO -->
-        <div class="menu-category" data-page-node-id="VSM9tP0jx7NH5l5Nd22Fm2">ARROZ FRITO / 炒饭类</div>
-        
-        <div class="menu-item" data-page-node-id="slfImHMwFAf299L1E9A1hL"><div class="item-info" data-page-node-id="Y2cDgNvXtgGD9mIGEKrCVE"><div class="item-title" data-page-node-id="1dqdWaespiDTqTRKoxBywC">8. Arroz frito con vegetales <span class="cn-name" data-page-node-id="ltDPzPfeJkDgenwhw17DFF">(蔬菜炒饭)</span></div></div><div class="btn-group" data-page-node-id="oboUFs3jeQTbUeKPJgEtVh"><button class="btn-add" onclick="addToCart('8. Arroz frito con vegetales (Mediano) / 蔬菜炒饭 (中)', 2500)" data-page-node-id="KLh1OYGcIWAK3smNnCrpI4">中 ₡2,500</button><button class="btn-add" onclick="addToCart('8. Arroz frito con vegetales (Grande) / 蔬菜炒饭 (大)', 3500)" data-page-node-id="KSGJNEbzA8EmL7olm6jCTO">大 ₡3,500</button></div></div>
-        <div class="menu-item" data-page-node-id="jnoQsudRvCpOvUgAs8iiff"><div class="item-info" data-page-node-id="1zDY8F5ROHKyiPtlmzIrWH"><div class="item-title" data-page-node-id="9lJLQrZTicgIBk2Dg7wcae">9. Arroz frito de la casa <span class="cn-name" data-page-node-id="KM5ywTfJHKwsTR0nNfDPlv">(招牌炒饭)</span></div></div><div class="btn-group" data-page-node-id="fX3vehgG9UKn8k1DFU0LID"><button class="btn-add" onclick="addToCart('9. Arroz frito de la casa (Mediano) / 招牌炒饭 (中)', 3500)" data-page-node-id="9YxFMbt02tKLEPHNttqBKQ">中 ₡3,500</button><button class="btn-add" onclick="addToCart('9. Arroz frito de la casa (Grande) / 招牌炒饭 (大)', 4500)" data-page-node-id="HAwCK1w4b0fy6Ogw50vFqg">大 ₡4,500</button></div></div>
-        <div class="menu-item" data-page-node-id="N8i9OTaxMfopnE3nFfbghJ"><div class="item-info" data-page-node-id="VhyqwyVHWOCoHKb273DIQd"><div class="item-title" data-page-node-id="fs1elECoJEGOAR2CX6uV07">10. Arroz cantones especial <span class="cn-name" data-page-node-id="xTJeVpLgl0yxyysnkqNBhI">(广东炒饭)</span></div></div><div class="btn-group" data-page-node-id="1Z55nyoKmPfK2lenUn0q86"><button class="btn-add" onclick="addToCart('10. Arroz cantones (Mediano) / 广东炒饭 (中)', 2500)" data-page-node-id="AnhBL5ulzqVlJYhSecL58u">中 ₡2,500</button><button class="btn-add" onclick="addToCart('10. Arroz cantones (Grande) / 广东炒饭 (大)', 3500)" data-page-node-id="JyQNNEa40oqYSrUgyHfE9L">大 ₡3,500</button></div></div>
-        <div class="menu-item" data-page-node-id="uYZn9EskqfxOxraMbSeZXR"><div class="item-info" data-page-node-id="DB6ZbeROg40nBcjcw4O7IR"><div class="item-title" data-page-node-id="nZmNclkBDCVkLQa8D2sHKB">11. Arroz frito con pollo <span class="cn-name" data-page-node-id="xNFassrfFyDb4pgKs9e4GK">(鸡肉炒饭)</span></div></div><div class="btn-group" data-page-node-id="9ZCrCt8r49Lu2oRo4VAJBM"><button class="btn-add" onclick="addToCart('11. Arroz frito con pollo (Mediano) / 鸡肉炒饭 (中)', 2500)" data-page-node-id="msQYUhCBqsd8gc9LsFU2fo">中 ₡2,500</button><button class="btn-add" onclick="addToCart('11. Arroz frito con pollo (Grande) / 鸡肉炒饭 (大)', 3400)" data-page-node-id="WWDhBTUNilwrAz42ty6t7N">大 ₡3,400</button></div></div>
-        <div class="menu-item" data-page-node-id="lVDTLMUlLLLtvhLzNG5hBd"><div class="item-info" data-page-node-id="pNqAQslAOS5i5LEfDhWmFt"><div class="item-title" data-page-node-id="ebmGOj8ceZWk1qo6kD7Wir">12. Arroz frito con pollo y camarones <span class="cn-name" data-page-node-id="EVsk9Ot2fjtwOOygRpzvKa">(鸡肉虾仁炒饭)</span></div></div><div class="btn-group" data-page-node-id="RRI4VwZbkhVj41mvRe3eOS"><button class="btn-add" onclick="addToCart('12. Arroz frito con pollo y camarones (Mediano) / 鸡虾炒饭 (中)', 3000)" data-page-node-id="zlSr3gSN8SjKd0cXpPqj42">中 ₡3,000</button><button class="btn-add" onclick="addToCart('12. Arroz frito con pollo y camarones (Grande) / 鸡虾炒饭 (大)', 4000)" data-page-node-id="VNEfB4tXB5DlAtanolqIni">大 ₡4,000</button></div></div>
-        <div class="menu-item" data-page-node-id="GkJwKhMFTXMBJwxkCppsOx"><div class="item-info" data-page-node-id="kgn4uJJlH80Xy5A8SG1EQc"><div class="item-title" data-page-node-id="RgQsTTNU1NolxHiEWXO5IT">13. Arroz frito con lechón <span class="cn-name" data-page-node-id="u41Nx9BORIP3kxjxFJgLKH">(叉烧炒饭)</span></div></div><div class="btn-group" data-page-node-id="5xycz9YFpxqspdByZE89eZ"><button class="btn-add" onclick="addToCart('13. Arroz frito con lechón (Mediano) / 叉烧炒饭 (中)', 2500)" data-page-node-id="FYx5KF86jjLIBQ4YXVkwqO">中 ₡2,500</button><button class="btn-add" onclick="addToCart('13. Arroz frito con lechón (Grande) / 叉烧炒饭 (大)', 3400)" data-page-node-id="N506ieNtJrgGs9dvCOu6BW">大 ₡3,400</button></div></div>
-        <div class="menu-item" data-page-node-id="fjwa674u6tXrLETihuRt33"><div class="item-info" data-page-node-id="DYXssQXAuoN7Cv7Of3j4Vb"><div class="item-title" data-page-node-id="yeYGdYMIByPqOmewuEnJd0">14. Arroz frito con camarones <span class="cn-name" data-page-node-id="GUHS9E80ct2g0LdGZvuP9u">(虾仁炒饭)</span></div></div><div class="btn-group" data-page-node-id="ZaO9eRjlg7bOkrDiOdVqHg"><button class="btn-add" onclick="addToCart('14. Arroz frito con camarones (Mediano) / 虾仁炒饭 (中)', 2800)" data-page-node-id="PtGycMxJFRJGvFBoEbxEhp">中 ₡2,800</button><button class="btn-add" onclick="addToCart('14. Arroz frito con camarones (Grande) / 虾仁炒饭 (大)', 3800)" data-page-node-id="2f6lAi40qtpGOawof5fMlt">大 ₡3,800</button></div></div>
-        <div class="menu-item" data-page-node-id="WlDBfOET5KHH3EphoYEhm5"><div class="item-info" data-page-node-id="g7z9lNIYP4BceiYkCU7X93"><div class="item-title" data-page-node-id="MWV0kTpWrjU2njM9KAnfCy">15. Arroz frito con carne de res <span class="cn-name" data-page-node-id="PtEmdFTvZbOPiBH38jbHgR">(牛肉炒饭)</span></div></div><div class="btn-group" data-page-node-id="Q0Xd4E24qbBR1N3MdwgLTB"><button class="btn-add" onclick="addToCart('15. Arroz frito con carne de res (Mediano) / 牛肉炒饭 (中)', 2800)" data-page-node-id="d6hGpIVh46ZyJAF3L5mWuY">中 ₡2,800</button><button class="btn-add" onclick="addToCart('15. Arroz frito con carne de res (Grande) / 牛肉炒饭 (大)', 3800)" data-page-node-id="E98Edkd25hwwipSGR2e99s">大 ₡3,800</button></div></div>
-        <div class="menu-item" data-page-node-id="aKmSQ1p4aDQpRGE3HQwQ1u"><div class="item-info" data-page-node-id="bdkKs64b3kKdMxlWhxQBkg"><div class="item-title" data-page-node-id="3EffRrmNt42TDjZJHMq5zw">16. Arroz frito con chorizo chino <span class="cn-name" data-page-node-id="eqCzcuVkz7vDITRrEX57O4">(腊肠炒饭)</span></div></div><div class="btn-group" data-page-node-id="9oJnJvbzGum5xFVVIPHcnX"><button class="btn-add" onclick="addToCart('16. Arroz frito con chorizo chino (Mediano) / 腊肠炒饭 (中)', 2700)" data-page-node-id="IBKRFLWerlYiWIqXPrBfFQ">中 ₡2,700</button><button class="btn-add" onclick="addToCart('16. Arroz frito con chorizo chino (Grande) / 腊肠炒饭 (大)', 3700)" data-page-node-id="Y7xOOLkfB8uZKKfah4txo3">大 ₡3,700</button></div></div>
-        <div class="menu-item" data-page-node-id="4Axiv1jDQGh3FhJcSP0M0S"><div class="item-info" data-page-node-id="sSmvzNTNdg1XA8jm3yTLH6"><div class="item-title" data-page-node-id="NoRd0z55P9nUeskNUvqoFd">17. Arroz frito con mariscos <span class="cn-name" data-page-node-id="ukgNDyPf1v8QEvIjiY3iYy">(海鲜炒饭)</span></div></div><div class="btn-group" data-page-node-id="tF6niicKOImZOdpKhegmag"><button class="btn-add" onclick="addToCart('17. Arroz frito con mariscos (Grande) / 海鲜炒饭 (大)', 5500)" data-page-node-id="r7cjj2bLgVL6yPWbe2veSe">大 ₡5,500</button></div></div>
-        
-        <!-- 18. 中式套餐 -->
-        <div class="menu-category" style="margin-top:15px; font-size:1rem; border-left:none; background:#eaeaea; padding:8px;" data-page-node-id="7AOhrmz7Qk7gTprb596kkF">18. Casado chino (中式套餐)</div>
-        
-        <div class="menu-item" data-page-node-id="G48AdYB5cD00ZLKG0XqQsT"><div class="item-info" data-page-node-id="dweSadHvP0vcBXsWN1Ejjt"><div class="item-title" data-page-node-id="lJVerLPWXIUOeiNrKoPZqc">A. Arroz cantones y chop suey en salsa <span class="cn-name" data-page-node-id="0wVFsGcQtziPPA6kbfI7xe">(广东饭 + 湿炒面)</span></div></div><div class="btn-group" data-page-node-id="1fjosTyxF7sLdNnGkSVyHf"><button class="btn-add" onclick="addToCart('18-A. Casado chino: Arroz y chop suey en salsa (Mediano) / 广东饭+湿炒面 (中)', 3500)" data-page-node-id="j2DAPgDhTqaraoYC1FYyC1">中 ₡3,500</button><button class="btn-add" onclick="addToCart('18-A. Casado chino: Arroz y chop suey en salsa (Grande) / 广东饭+湿炒面 (大)', 4000)" data-page-node-id="R7szbTaSf7bifELkBGcamD">大 ₡4,000</button></div></div>
-        <div class="menu-item" data-page-node-id="lS2VncKMO23cz9AUZM00Cz"><div class="item-info" data-page-node-id="8DsDfOmIE5HzXRFHKv8DaE"><div class="item-title" data-page-node-id="6zB6Urdch82fPw8t8uhPGA">B. Arroz cantones y chop suey seco <span class="cn-name" data-page-node-id="AAIJkehJsP1ljWSqpXMfvg">(广东饭 + 干炒面)</span></div></div><div class="btn-group" data-page-node-id="WZUT2DiS4wYjOtysqeEVkR"><button class="btn-add" onclick="addToCart('18-B. Casado chino: Arroz y chop suey seco (Mediano) / 广东饭+干炒面 (中)', 3500)" data-page-node-id="WocrkyWGz48YsZ0On8EHFL">中 ₡3,500</button><button class="btn-add" onclick="addToCart('18-B. Casado chino: Arroz y chop suey seco (Grande) / 广东饭+干炒面 (大)', 4000)" data-page-node-id="GQ3CIvLrzPnNUnuldtbzqQ">大 ₡4,000</button></div></div>
-
-        <!-- ARROZ EN SALSA -->
-        <div class="menu-category" data-page-node-id="LofkmeTkkDqKXHJLglUJXZ">ARROZ EN SALSA / 酱汁饭</div>
-        
-        <div class="menu-item" data-page-node-id="rLj5LokDp988fKAWeHMQYN"><div class="item-info" data-page-node-id="NaFrfwhA6UsPAKaE7Cyk54"><div class="item-title" data-page-node-id="hNUwE81puG93PeaN7USDFd">19. Arroz en salsa especial de la casa <span class="cn-name" data-page-node-id="76a4uNVhC9bsF45I5uCeAX">(招牌酱汁饭)</span></div></div><div class="btn-group" data-page-node-id="3cT6PbPg1l666H24HVHagN"><button class="btn-add" onclick="addToCart('19. Arroz en salsa especial (Mediano) / 招牌酱汁饭 (中)', 2700)" data-page-node-id="QGqVgLpbwj6AXhwRnCQO0m">中 ₡2,700</button><button class="btn-add" onclick="addToCart('19. Arroz en salsa especial (Grande) / 招牌酱汁饭 (大)', 3700)" data-page-node-id="8uPxzKbvoMxEAEJubkPneV">大 ₡3,700</button></div></div>
-        <div class="menu-item" data-page-node-id="KzM5GeaHuM1FFFECnZkFNe"><div class="item-info" data-page-node-id="5WUobv58ZUrONSG2PpvYE8"><div class="item-title" data-page-node-id="UicOLSbIuYJdBa1MxSHPsz">20. Arroz en salsa con pollo y vegetales <span class="cn-name" data-page-node-id="VxUM075Cor2WMtJEvIhzpK">(鸡肉酱汁饭)</span></div></div><div class="btn-group" data-page-node-id="tj5UFsbVWI9oeQL4aGFj0w"><button class="btn-add" onclick="addToCart('20. Arroz en salsa con pollo (Mediano) / 鸡肉酱汁饭 (中)', 2700)" data-page-node-id="apSXOpibqhUJiA1PSVROog">中 ₡2,700</button><button class="btn-add" onclick="addToCart('20. Arroz en salsa con pollo (Grande) / 鸡肉酱汁饭 (大)', 3700)" data-page-node-id="mMisi1NbWlgqGPkAd1c0LM">大 ₡3,700</button></div></div>
-        <div class="menu-item" data-page-node-id="GXV4CtOPApBme1gyo0sob2"><div class="item-info" data-page-node-id="nnBkqvvCJHEX8DCNLFgiwF"><div class="item-title" data-page-node-id="Bam4jkQQAPO36Hy4vGR4QG">21. Arroz en salsa con lechón y vegetales <span class="cn-name" data-page-node-id="Vw2SFCaUs16BqK8W1SZ4dZ">(叉烧酱汁饭)</span></div></div><div class="btn-group" data-page-node-id="bVK2h1UkBoVrXyR39412Pf"><button class="btn-add" onclick="addToCart('21. Arroz en salsa con lechón (Mediano) / 叉烧酱汁饭 (中)', 2700)" data-page-node-id="08hu7iM9SMJcORzn08iQ6l">中 ₡2,700</button><button class="btn-add" onclick="addToCart('21. Arroz en salsa con lechón (Grande) / 叉烧酱汁饭 (大)', 3700)" data-page-node-id="NneDNdpzBhQiTEnaoKpXOO">大 ₡3,700</button></div></div>
-        <div class="menu-item" data-page-node-id="5nfMtsjlDOya8Wt4G9vCII"><div class="item-info" data-page-node-id="0xxHzSJhR1vSIcRmkTf3Vu"><div class="item-title" data-page-node-id="3eTMI5584GBCxJByiX1dJA">22. Arroz en salsa con chorizo chino <span class="cn-name" data-page-node-id="9yDWnCIBVwdZAsZgyE9vm0">(腊肠酱汁饭)</span></div></div><div class="btn-group" data-page-node-id="PBAltbcCHRRVXuOBmK0REV"><button class="btn-add" onclick="addToCart('22. Arroz en salsa con chorizo chino (Mediano) / 腊肠酱汁饭 (中)', 2800)" data-page-node-id="lNOHrFuuYkVwO8B4IGOlKu">中 ₡2,800</button><button class="btn-add" onclick="addToCart('22. Arroz en salsa con chorizo chino (Grande) / 腊肠酱汁饭 (大)', 3800)" data-page-node-id="y3j0ZsvZgWzxEU0skFZ7GD">大 ₡3,800</button></div></div>
-        <div class="menu-item" data-page-node-id="UR0eL4y1PZiYQktIbjML1C"><div class="item-info" data-page-node-id="RVpmkRkP4x5RewItWbJwoD"><div class="item-title" data-page-node-id="Qeu2aFwAlQ0gPKbBBAk7ac">23. Arroz en salsa con carne de res <span class="cn-name" data-page-node-id="Nfg1hQUUzNNHnlFV5YiH28">(牛肉酱汁饭)</span></div></div><div class="btn-group" data-page-node-id="QuDy2hguEsCCrTOwg4FDJl"><button class="btn-add" onclick="addToCart('23. Arroz en salsa con carne de res (Mediano) / 牛肉酱汁饭 (中)', 2800)" data-page-node-id="eRJNSDAJTdLi7dy8I7HdMU">中 ₡2,800</button><button class="btn-add" onclick="addToCart('23. Arroz en salsa con carne de res (Grande) / 牛肉酱汁饭 (大)', 3800)" data-page-node-id="GbphI4h6eEn2cDnGOeg6qi">大 ₡3,800</button></div></div>
-        <div class="menu-item" data-page-node-id="dkQxMdXdNAxPTFX7XlvikB"><div class="item-info" data-page-node-id="859BfAmmdNVTpqC42SZdoR"><div class="item-title" data-page-node-id="6dJxILVoWwErMTgmZ67jW8">24. Arroz en salsa con camarones <span class="cn-name" data-page-node-id="7qGsGJVxuh9C2j9aYg4a5n">(虾仁酱汁饭)</span></div></div><div class="btn-group" data-page-node-id="eMHPKLnXrqPtazLQ5mEvMY"><button class="btn-add" onclick="addToCart('24. Arroz en salsa con camarones (Mediano) / 虾仁酱汁饭 (中)', 3000)" data-page-node-id="OojLhDARvpDAY2g4H5iLTK">中 ₡3,000</button><button class="btn-add" onclick="addToCart('24. Arroz en salsa con camarones (Grande) / 虾仁酱汁饭 (大)', 4000)" data-page-node-id="qolE7eVw2J0RSmqsow7KI3">大 ₡4,000</button></div></div>
-        <div class="menu-item" data-page-node-id="HbBuD4bnNmCZlikAGS2OrQ"><div class="item-info" data-page-node-id="ZrOE8ZzglpOw1sGR9I9USu"><div class="item-title" data-page-node-id="4FRwEfo9NWsGX8XTQB8f5C">25. Arroz en salsa con mariscos <span class="cn-name" data-page-node-id="VZUQQzHdkkLaOzRZHiE7C1">(海鲜酱汁饭)</span></div></div><div class="btn-group" data-page-node-id="oY6WGA21iSGyxaCrUBjzzl"><button class="btn-add" onclick="addToCart('25. Arroz en salsa con mariscos (Grande) / 海鲜酱汁饭 (大)', 5500)" data-page-node-id="ru3gtSvhcHjvsLdxogR4sk">大 ₡5,500</button></div></div>
-        <div class="menu-item" data-page-node-id="M6xAdZBTJXetF6K2xEWv1a"><div class="item-info" data-page-node-id="jFrS46N5cPZcS9HuFxpJRZ"><div class="item-title" data-page-node-id="0bDMVJJ7FoLQChrfmbjZG4">26. Arroz en salsa con pollo y camarones <span class="cn-name" data-page-node-id="pWpigGGIu7001JTtaZONDN">(鸡肉虾仁酱汁饭)</span></div></div><div class="btn-group" data-page-node-id="tJL4dmuBnTxvd9Nb2oDpvE"><button class="btn-add" onclick="addToCart('26. Arroz en salsa con pollo y camarones (Mediano) / 鸡虾酱汁饭 (中)', 3000)" data-page-node-id="iAmMGbRGf2Zp7Rh2zGB7EH">中 ₡3,000</button><button class="btn-add" onclick="addToCart('26. Arroz en salsa con pollo y camarones (Grande) / 鸡虾酱汁饭 (大)', 4000)" data-page-node-id="c1qu6zotE6JwRBMGgxJNEx">大 ₡4,000</button></div></div>
-
-        <!-- CHOP SUEY EN SALSA -->
-        <div class="menu-category" data-page-node-id="QQMeGf9y8ma3APt37owuOA">CHOP SUEY EN SALSA / 湿炒面</div>
-        
-        <div class="menu-item" data-page-node-id="2Ebr2uMbYTGxGoZzowkS9T"><div class="item-info" data-page-node-id="8B7Y3jn9GUTKDzHbgfW1ub"><div class="item-title" data-page-node-id="eThW23hBYOv0ZRGY3Est6U">27. Chop suey especial de la casa <span class="cn-name" data-page-node-id="NAaj1Wqbengg1XN5FiP1AK">(招牌湿炒面)</span></div></div><div class="btn-group" data-page-node-id="PNRKLVfW9nW0xco6onsDd0"><button class="btn-add" onclick="addToCart('27. Chop suey especial en salsa (Mediano) / 招牌湿炒面 (中)', 2700)" data-page-node-id="aycvPQCmDEyRrBrDNEctfv">中 ₡2,700</button><button class="btn-add" onclick="addToCart('27. Chop suey especial en salsa (Grande) / 招牌湿炒面 (大)', 3700)" data-page-node-id="FJk8KFEZdDeIttl1v3gbeZ">大 ₡3,700</button></div></div>
-        <div class="menu-item" data-page-node-id="OZ9NvzEMbDuUK2696EStJS"><div class="item-info" data-page-node-id="YXIARDLxu2CFrujRRHCrq3"><div class="item-title" data-page-node-id="J1i8g69VG41vBMJbqZCcLI">28. Chop suey en salsa con pollo <span class="cn-name" data-page-node-id="pZwP7FX1KeEXIZijinS0W0">(鸡肉湿炒面)</span></div></div><div class="btn-group" data-page-node-id="23RmVcwj2QZA13aLAkVDFG"><button class="btn-add" onclick="addToCart('28. Chop suey en salsa con pollo (Mediano) / 鸡肉湿炒面 (中)', 2700)" data-page-node-id="nMFNHtkdDtP4NvyaD8RgDj">中 ₡2,700</button><button class="btn-add" onclick="addToCart('28. Chop suey en salsa con pollo (Grande) / 鸡肉湿炒面 (大)', 3700)" data-page-node-id="SW6wMgv8X9pdVuKRSBGafa">大 ₡3,700</button></div></div>
-        <div class="menu-item" data-page-node-id="m23jl65xCInDz03G1jpuYQ"><div class="item-info" data-page-node-id="CDe3UcErKdgngDEl8D4Sps"><div class="item-title" data-page-node-id="qAajHG5ND9rTu6NpRnilqH">29. Chop suey en salsa con pollo y camarones <span class="cn-name" data-page-node-id="UaNtYWomneI6y7D3GXwzp3">(鸡肉虾仁湿炒面)</span></div></div><div class="btn-group" data-page-node-id="l3C8ofAiNIkX8GkB63u3oE"><button class="btn-add" onclick="addToCart('29. Chop suey en salsa con pollo y camarones (Mediano) / 鸡虾湿炒面 (中)', 3000)" data-page-node-id="09GdvzRxzhX4UW9DXTnEUt">中 ₡3,000</button><button class="btn-add" onclick="addToCart('29. Chop suey en salsa con pollo y camarones (Grande) / 鸡虾湿炒面 (大)', 4000)" data-page-node-id="EgjpWJXKVkZFlUIQWdTVob">大 ₡4,000</button></div></div>
-        <div class="menu-item" data-page-node-id="6HzCacazdDYlo6GCi0UhaC"><div class="item-info" data-page-node-id="BonlG3KcpBm8SCNBCoqGlE"><div class="item-title" data-page-node-id="RaHLqgRJYjBOG2CIq0JZsD">30. Chop suey en salsa con lechón <span class="cn-name" data-page-node-id="Z5tIITyVNHJEiSGevK4Cei">(叉烧湿炒面)</span></div></div><div class="btn-group" data-page-node-id="LYtoI6VbMEzWLq7XTfFyAh"><button class="btn-add" onclick="addToCart('30. Chop suey en salsa con lechón (Mediano) / 叉烧湿炒面 (中)', 2700)" data-page-node-id="uY3VtPqcm5nG1wCeBBlZ8g">中 ₡2,700</button><button class="btn-add" onclick="addToCart('30. Chop suey en salsa con lechón (Grande) / 叉烧湿炒面 (大)', 3700)" data-page-node-id="8DvNmUPC2V0kDuftee2vLI">大 ₡3,700</button></div></div>
-        <div class="menu-item" data-page-node-id="83zJnAP3BtUuMN2DFelV6A"><div class="item-info" data-page-node-id="yWs8P7Euhie8wD29TsApDT"><div class="item-title" data-page-node-id="UZxCovFzOHO6AyCVJ1w0ez">31. Chop suey en salsa con carne de res <span class="cn-name" data-page-node-id="uEUqV5A2cT7bIkO7c7CCjo">(牛肉湿炒面)</span></div></div><div class="btn-group" data-page-node-id="AIsM7xfsXpzulCeGogHIkl"><button class="btn-add" onclick="addToCart('31. Chop suey en salsa con carne de res (Mediano) / 牛肉湿炒面 (中)', 2800)" data-page-node-id="NJ91HtMHgpcAwVWiHyTcEt">中 ₡2,800</button><button class="btn-add" onclick="addToCart('31. Chop suey en salsa con carne de res (Grande) / 牛肉湿炒面 (大)', 3800)" data-page-node-id="q0lrNS62KZdHNLvkHHKsFG">大 ₡3,800</button></div></div>
-        <div class="menu-item" data-page-node-id="gfdPPJtoCKeMEaPXNObGzr"><div class="item-info" data-page-node-id="cD6G2fK1TW9ALF7kwnJtiM"><div class="item-title" data-page-node-id="BV5nQSIM4d27Lez232dh47">32. Chop suey en salsa con chorizo chino <span class="cn-name" data-page-node-id="qkxNpvS51jXOnfhOpQ1F8h">(腊肠湿炒面)</span></div></div><div class="btn-group" data-page-node-id="SO1xBsimzOvNhthE0rMBDj"><button class="btn-add" onclick="addToCart('32. Chop suey en salsa con chorizo chino (Mediano) / 腊肠湿炒面 (中)', 2800)" data-page-node-id="lJUWyBWnNFE6iQy0kimBPV">中 ₡2,800</button><button class="btn-add" onclick="addToCart('32. Chop suey en salsa con chorizo chino (Grande) / 腊肠湿炒面 (大)', 3800)" data-page-node-id="Mvv7NES4gQjo0VnA9nOgUs">大 ₡3,800</button></div></div>
-        <div class="menu-item" data-page-node-id="WVhblhP6N5zMvUWYmpzZi3"><div class="item-info" data-page-node-id="fj9sBBCVfYtFv0y5m1UkXj"><div class="item-title" data-page-node-id="4qdZnFfQJokwx0PdvMFgCL">33. Chop suey en salsa con camarones <span class="cn-name" data-page-node-id="GbJGel2ytghPSNX6VLRk9b">(虾仁湿炒面)</span></div></div><div class="btn-group" data-page-node-id="1CiCBGi3ypp7fiHTj6VBZc"><button class="btn-add" onclick="addToCart('33. Chop suey en salsa con camarones (Mediano) / 虾仁湿炒面 (中)', 3000)" data-page-node-id="YXnlVulytNoE8qdH9mXkPf">中 ₡3,000</button><button class="btn-add" onclick="addToCart('33. Chop suey en salsa con camarones (Grande) / 虾仁湿炒面 (大)', 4000)" data-page-node-id="jLvxVaNaoNSLo7KrCER2BE">大 ₡4,000</button></div></div>
-        <div class="menu-item" data-page-node-id="pNQlqbEtUSYlwXfdu98CuA"><div class="item-info" data-page-node-id="E1SGhUQfQ2BUdlV2K7L0Gn"><div class="item-title" data-page-node-id="TjTcbdSncnJebReVIgOUO9">34. Chop suey en salsa con mariscos <span class="cn-name" data-page-node-id="Gv1OFpd5w43sElyCH0Rj1z">(海鲜湿炒面)</span></div></div><div class="btn-group" data-page-node-id="XEdBSnbAqPeNxErEp7rpwS"><button class="btn-add" onclick="addToCart('34. Chop suey en salsa con mariscos (Grande) / 海鲜湿炒面 (大)', 5500)" data-page-node-id="KjGyhFZMBncyUVtZXtShPm">大 ₡5,500</button></div></div>
-
-        <!-- CHOP SUEY SECO -->
-        <div class="menu-category" data-page-node-id="kCVyOedAVjEiQgdm38tFfm">CHOP SUEY SECO / 干炒面</div>
-        
-        <div class="menu-item" data-page-node-id="IAVU4m9x6jp50e0NETAFrM"><div class="item-info" data-page-node-id="OC2nUhlFsMqzpQTaJBFYr0"><div class="item-title" data-page-node-id="54hH4fftODjVKwSLa4hd56">35. Chop suey seco con pollo <span class="cn-name" data-page-node-id="ssfFPMSdr3X9KRfk86OeLe">(鸡肉干炒面)</span></div></div><div class="btn-group" data-page-node-id="imZc0qAm6TCNTBX3igCnA5"><button class="btn-add" onclick="addToCart('35. Chop suey seco con pollo (Mediano) / 鸡肉干炒面 (中)', 2700)" data-page-node-id="yB4lXbTqR8VP8PxivcP4Fk">中 ₡2,700</button><button class="btn-add" onclick="addToCart('35. Chop suey seco con pollo (Grande) / 鸡肉干炒面 (大)', 3700)" data-page-node-id="VvFnGhZtMUY5HD7etVs3sH">大 ₡3,700</button></div></div>
-        <div class="menu-item" data-page-node-id="WJtCVDyWLJFF7FA2mGp3As"><div class="item-info" data-page-node-id="MVyVVclGQeGPl7xXG21fK1"><div class="item-title" data-page-node-id="UGLA4FSe0AhNvGaJTcKTfd">36. Chop suey seco con pollo y camarones <span class="cn-name" data-page-node-id="4SeldGqenAQRVUAQvtZag8">(鸡肉虾仁干炒面)</span></div></div><div class="btn-group" data-page-node-id="aezgBFHtqBJLAzHmuhXh1x"><button class="btn-add" onclick="addToCart('36. Chop suey seco con pollo y camarones (Mediano) / 鸡虾干炒面 (中)', 3000)" data-page-node-id="OsiQCBNI8ADisn5ecXgB7j">中 ₡3,000</button><button class="btn-add" onclick="addToCart('36. Chop suey seco con pollo y camarones (Grande) / 鸡虾干炒面 (大)', 4000)" data-page-node-id="lBjuOEIp6BA9iz1SjRbCZj">大 ₡4,000</button></div></div>
-        <div class="menu-item" data-page-node-id="NZuJnI0frqOPHvS6CthHnY"><div class="item-info" data-page-node-id="5TGLcGjGD1HQnu489S5hwo"><div class="item-title" data-page-node-id="3ehYQdhATJtL95sPf4H9eB">37. Chop suey seco con lechón <span class="cn-name" data-page-node-id="XQKYlzCVMCv1itJJggAFEe">(叉烧干炒面)</span></div></div><div class="btn-group" data-page-node-id="C2KArJ4q9PI4iGe83qJNzy"><button class="btn-add" onclick="addToCart('37. Chop suey seco con lechón (Mediano) / 叉烧干炒面 (中)', 2700)" data-page-node-id="DMwtrYhEIr5J5ndPEYNRKO">中 ₡2,700</button><button class="btn-add" onclick="addToCart('37. Chop suey seco con lechón (Grande) / 叉烧干炒面 (大)', 3700)" data-page-node-id="VyVpfWQPqKwOqhfHP2BQSr">大 ₡3,700</button></div></div>
-        <div class="menu-item" data-page-node-id="HauCEZlKomBhVmpKnf5qWb"><div class="item-info" data-page-node-id="7HXWNXJ0M11ZdW4XZNyEkh"><div class="item-title" data-page-node-id="fCNHt03kHHSF6opgYUUw5U">38. Chop suey seco con carne de res <span class="cn-name" data-page-node-id="IcFHAAOXaCR9BDfGQHtcb3">(牛肉干炒面)</span></div></div><div class="btn-group" data-page-node-id="CBfvDvcKcNektSVSOBnm8p"><button class="btn-add" onclick="addToCart('38. Chop suey seco con carne de res (Mediano) / 牛肉干炒面 (中)', 2800)" data-page-node-id="fZKLKSSgZyMerDFqforrI4">中 ₡2,800</button><button class="btn-add" onclick="addToCart('38. Chop suey seco con carne de res (Grande) / 牛肉干炒面 (大)', 3800)" data-page-node-id="T6IAYBd5HryZ0mBKeTQW7u">大 ₡3,800</button></div></div>
-        <div class="menu-item" data-page-node-id="skO41gUtuxEJRJZzKoL5Ht"><div class="item-info" data-page-node-id="siiYeWprd0Bc1L1qH8H5JE"><div class="item-title" data-page-node-id="qXwYEuLgFoKQHiIdyoJaPl">39. Chop suey seco con chorizo chino <span class="cn-name" data-page-node-id="OcSHTXxNbtBLo0b2SkDB07">(腊肠干炒面)</span></div></div><div class="btn-group" data-page-node-id="Wrl8lhUs7C4nL8XCDhNVMM"><button class="btn-add" onclick="addToCart('39. Chop suey seco con chorizo chino (Mediano) / 腊肠干炒面 (中)', 2800)" data-page-node-id="LIVTgrMlNuRJyKHn4ApFVz">中 ₡2,800</button><button class="btn-add" onclick="addToCart('39. Chop suey seco con chorizo chino (Grande) / 腊肠干炒面 (大)', 3700)" data-page-node-id="fg7gCqtxqqPkFkPggKdapR">大 ₡3,700</button></div></div>
-        <div class="menu-item" data-page-node-id="eMKIcax9UlC7PBbP4FBlr9"><div class="item-info" data-page-node-id="IyMEmXIJahNI6H203vNOmI"><div class="item-title" data-page-node-id="Ks1ipSgEel7VUFDIM1k1kk">40. Chop suey seco con camarones <span class="cn-name" data-page-node-id="MFUXJGCiiurbRRy7p9PvJE">(虾仁干炒面)</span></div></div><div class="btn-group" data-page-node-id="8WJs3axiRb1KxNvJcKctEm"><button class="btn-add" onclick="addToCart('40. Chop suey seco con camarones (Mediano) / 虾仁干炒面 (中)', 3000)" data-page-node-id="D0BagYqXhgXhLGaK3oN4OU">中 ₡3,000</button><button class="btn-add" onclick="addToCart('40. Chop suey seco con camarones (Grande) / 虾仁干炒面 (大)', 4000)" data-page-node-id="NjJ9uGPACbcmP7z57VSsG1">大 ₡4,000</button></div></div>
-
-        <!-- ARROZ A LA PLANCHA -->
-        <div class="menu-category" data-page-node-id="EeVLS9MzmrcKJ1ddqnoI7k">ARROZ A LA PLANCHA / 炸米</div>
-        
-        <div class="menu-item" data-page-node-id="8KWnKKoHwTctDLFYVa4L1q"><div class="item-info" data-page-node-id="fHbqAoZCB4mxpfhtP4sqar"><div class="item-title" data-page-node-id="E53qkIEzJG4PgYFv005xMc">41. Arroz tostado a la plancha especial <span class="cn-name" data-page-node-id="HiRUC2aZLkgpqNSL4GBGYz">(招牌炸米)</span></div><div class="item-price" data-page-node-id="faquFLMfeaJF3nGnDMQC4j">₡5,800</div></div><button class="btn-add" onclick="addToCart('41. Arroz tostado a la plancha especial / 招牌炸米', 5800)" data-page-node-id="JPgcHTL47yfKkeTWjlna08">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="XJBp0If0DEID9Q84KCzYwf"><div class="item-info" data-page-node-id="7qEg5AHsGDtmNzVTD5L4f2"><div class="item-title" data-page-node-id="pklvRwiNe8ktAHU5IK17A4">42. Arroz tostado a la plancha con camarones <span class="cn-name" data-page-node-id="VtMgag8gRrWQ2hSPoxeLSx">(虾仁炸米)</span></div><div class="item-price" data-page-node-id="q72zz0EpviLFL0S5aNF6om">₡6,800</div></div><button class="btn-add" onclick="addToCart('42. Arroz tostado a la plancha con camarones / 虾仁炸米', 6800)" data-page-node-id="kaCI3rWn4WykMRSB4Fy1di">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="0WamJQ0wlVp5Hml6XZMJgN"><div class="item-info" data-page-node-id="qsktrtbXLddj4NXLDxRUgH"><div class="item-title" data-page-node-id="y0QJKPsAUMWwfszBDbdGp1">43. Arroz tostado a la plancha con mariscos <span class="cn-name" data-page-node-id="KpAq3T2DM1pzb6jFVzKDFZ">(海鲜炸米)</span></div><div class="item-price" data-page-node-id="ijHOfEoUfciYpU5c9UVQJ1">₡6,000</div></div><button class="btn-add" onclick="addToCart('43. Arroz tostado a la plancha con mariscos / 海鲜炸米', 6000)" data-page-node-id="C5DVnmn3B1tE2R4dmUcfAA">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="TaEpy7VOmPlo1AOJQHCrFF"><div class="item-info" data-page-node-id="TVB3m5BiIV3ZFJSoQPZMnD"><div class="item-title" data-page-node-id="8YIcbtTzLT97rW8lA9TE5G">44. Arroz tostado a la plancha con carne de res <span class="cn-name" data-page-node-id="5JKd9uSJBVm1CWSBQtuCGf">(牛肉炸米)</span></div><div class="item-price" data-page-node-id="HDAdSUOFtKgE0wMq1KbnFb">₡6,000</div></div><button class="btn-add" onclick="addToCart('44. Arroz tostado a la plancha con carne de res / 牛肉炸米', 6000)" data-page-node-id="QoMyp1n9vjui7WjFePlO7Y">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="cwxgEsbAvloPMqa3WdDwHD"><div class="item-info" data-page-node-id="0cG4iucz6wz1CFOzbJAGAd"><div class="item-title" data-page-node-id="tPMvrAJdxUR5uzoPd65HmR">45. Arroz tostado a la plancha con pollo <span class="cn-name" data-page-node-id="2ZWWVrdFHlrYp0l0owKp9q">(鸡肉炸米)</span></div><div class="item-price" data-page-node-id="qWAKHV6CE8whEsV1WhvlIb">₡5,800</div></div><button class="btn-add" onclick="addToCart('45. Arroz tostado a la plancha con pollo / 鸡肉炸米', 5800)" data-page-node-id="bXDKxp1g7FiUXUexGr0ttn">+ 点餐</button></div>
-        <div class="menu-item" data-page-node-id="vrPDzv8m9MSBIXSioFP0ay"><div class="item-info" data-page-node-id="IlgbRcmfVEMoLxBhvG36YM"><div class="item-title" data-page-node-id="HL3lsOyHGvU5FpgUDNgz4Z">46. Arroz tostado a la plancha con pollo y camarones <span class="cn-name" data-page-node-id="FNObJ8BvL93u7tFBlvspgU">(鸡肉虾仁炸米)</span></div><div class="item-price" data-page-node-id="5Gyru2oum5m9isVS3XZlFq">₡6,000</div></div><button class="btn-add" onclick="addToCart('46. Arroz tostado a la plancha con pollo y camarones / 鸡虾炸米', 6000)" data-page-node-id="t2lAxbdYsmlExlR6zZdSBm">+ 点餐</button></div>
-
-        <!-- EXTRAS -->
-        <div class="menu-category" data-page-node-id="2IIhXYHkzb5ugk4LyLyKjN">EXTRAS / 附加选项</div>
-        
-        <div class="menu-item" data-page-node-id="8oqyBbnmN7lu7jVbmiloN5">
-            <div class="item-info" data-page-node-id="08wdXOWYwnKgPm1hF6KSBM">
-                <div class="item-title" data-page-node-id="it99s16drtXAA5jYnO2dPH">Extra camarones (5 unidades) <span class="cn-name" data-page-node-id="PhE9fhpdNuWjHJZToU3rDB">(加虾 5只)</span></div>
-                <div class="item-price" data-page-node-id="RWDFWKBcMiBFLhu9dthD0Y">₡1,000</div>
-            </div>
-            <button class="btn-add" onclick="addToCart('Extra camarones (5pcs) / 加虾 (5只)', 1000)" data-page-node-id="x7aFy1sdvRkBYUGJxYF9zE">+ 点餐</button>
-        </div>
-        
-        <div class="menu-item" data-page-node-id="F1PkBjxQ6M9d9cg0OnRdrD">
-            <div class="item-info" data-page-node-id="FmDtH02GrPHFJGqc16CA3E">
-                <div class="item-title" data-page-node-id="kw6tKmDAkofyZIqVhHdK75">Extra chorizo chino <span class="cn-name" data-page-node-id="2bOCJRMOwd40HZCS3yaB24">(加中国香肠)</span></div>
-                <div class="item-price" data-page-node-id="pk59YdQjKoxw7lidULFXn9">₡1,000</div>
-            </div>
-            <button class="btn-add" onclick="addToCart('Extra chorizo chino / 加中国香肠', 1000)" data-page-node-id="KLTscmt3jbRnBvuvxSBiTD">+ 点餐</button>
-        </div>
-        
-        <div class="menu-item" data-page-node-id="ulOConcpTIf9VDXBYmZ97g">
-            <div class="item-info" data-page-node-id="RFyomEPA1bUEAbhDrfKdoH">
-                <div class="item-title" data-page-node-id="DjWRqY6UalraCXFmMOY8Al">Envase extra <span class="cn-name" data-page-node-id="1G6L4TdBTaSZEA4eCxNIZI">(加饭盒)</span></div>
-                <div class="item-price" data-page-node-id="1ap92egG8PThqdq3oQGhzZ">₡100</div>
-            </div>
-            <button class="btn-add" onclick="addToCart('Envase extra / 加饭盒', 100)" data-page-node-id="JkoT6EEZDeuniaQVgSPauF">+ 点餐</button>
-        </div>
-
-    </div>
-
-    <!-- 底部购物车 -->
-    <div class="cart-bar" data-page-node-id="BNFF7aWgUiVVEFRSuW63Z9">
-        <div class="cart-info" data-page-node-id="i8Inf5CXdiro4RxXKdxPAT">
-            已选 <span id="cart-count" style="font-weight:bold; color:#d9251c;" data-page-node-id="xlVdwVsR6wGY3hCQd1SJN3">0</span> 件商品<br data-page-node-id="eaG7UOdTb8naa7AzIFaluj">
-            Total: <span class="cart-price" id="cart-total" data-page-node-id="Nj72ycHDA6Jgwos6iUnZBZ">₡0</span>
-        </div>
-        <button class="btn-submit" id="submit-btn" onclick="submitOrder()" data-page-node-id="qPNrrXz6HlVesl68XRZblm">确认下单 / Pedir</button>
-    </div>
-
-    <script>
-        // ==================== 防恶意点餐安全配置 ====================
-        const SECURITY_CONFIG = {
-            SUBMIT_COOLDOWN: 30,    // 提交冷却时间（秒）
-            MIN_ORDER_AMOUNT: 1,    // 最少点餐份数
-            MAX_ORDER_AMOUNT: 20,   // 单次点餐最大份数上限
-        };
-
-        // 获取或生成设备唯一标识（用于绑定设备，随订单一起发送，方便店主追溯恶意下单）
-        function getDeviceId() {
-            let deviceId = localStorage.getItem('guest_device_id');
-            if (!deviceId) {
-                deviceId = 'DEV-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
-                localStorage.setItem('guest_device_id', deviceId);
-            }
-            return deviceId;
-        }
-
-        // 检查防刷冷却状态，返回剩余等待秒数（0 表示可以提交）
-        function checkCooldown() {
-            const lastSubmit = localStorage.getItem('last_submit_time');
-            if (lastSubmit) {
-                const elapsed = (Date.now() - parseInt(lastSubmit, 10)) / 1000;
-                if (elapsed < SECURITY_CONFIG.SUBMIT_COOLDOWN) {
-                    return Math.ceil(SECURITY_CONFIG.SUBMIT_COOLDOWN - elapsed);
-                }
-            }
-            return 0;
-        }
-
-        // 倒计时禁用按钮函数
-        function disableSubmitButton(button, seconds) {
-            if (!button) return;
-            button.disabled = true;
-            const originalText = '确认下单 / Pedir';
-            let remaining = seconds;
-            const timer = setInterval(() => {
-                button.innerText = `请稍候 (${remaining}s)`;
-                remaining--;
-                if (remaining < 0) {
-                    clearInterval(timer);
-                    button.disabled = false;
-                    button.innerText = originalText;
-                }
-            }, 1000);
-        }
-
-        // ==================== 桌号参数绑定 ====================
-        // 二维码网址携带 ?table=01（如 https://nn258325.github.io/lee/?table=01）
-        // 桌号只允许字母/数字/短横线，防止恶意注入其他内容
-        function getTableNo() {
-            const raw = new URLSearchParams(window.location.search).get('table');
-            if (!raw) return null;
-            const clean = raw.replace(/[^\w\-]/g, '').slice(0, 10);
-            return clean || null;
-        }
-
-        // 页面加载时在顶栏显示桌号，方便客人自查、也方便服务员核对
-        (function initTableBanner() {
-            const tableNo = getTableNo();
-            const banner = document.getElementById('table-banner');
-            if (banner) {
-                banner.textContent = tableNo ? `📍 桌号 / Mesa: ${tableNo}` : '📍 桌号未识别 / Sin mesa';
-            }
-        })();
-
-        let cart = [];
-        let totalCount = 0;
-        let totalPrice = 0;
-
-        function addToCart(name, price) {
-            cart.push({ name: name, price: price });
-            totalCount += 1;
-            totalPrice += price;
-
-            document.getElementById('cart-count').innerText = totalCount;
-            document.getElementById('cart-total').innerText = '₡' + totalPrice.toLocaleString();
-        }
-
-        // ==================== 核心提交函数（带防刷加固） ====================
-        function submitOrder() {
-            const submitBtn = document.getElementById('submit-btn');
-
-            // 1. 检查防刷冷却
-            const cooldownRemaining = checkCooldown();
-            if (cooldownRemaining > 0) {
-                alert(`提交太频繁！请等待 ${cooldownRemaining} 秒后再试。\n/Espere ${cooldownRemaining} segundos.`);
-                return;
-            }
-
-            // 2. 校验菜品数量上限与下限
-            if (totalCount < SECURITY_CONFIG.MIN_ORDER_AMOUNT) {
-                alert('请先选择要点的菜品！ / Por favor seleccione un platillo.');
-                return;
-            }
-            if (totalCount > SECURITY_CONFIG.MAX_ORDER_AMOUNT) {
-                alert(`单次点餐菜品不能超过 ${SECURITY_CONFIG.MAX_ORDER_AMOUNT} 份，请核对订单。`);
-                return;
-            }
-
-            // 统计菜品数量（同名菜品合并显示）
-            let itemCounts = {};
-            cart.forEach(item => {
-                itemCounts[item.name] = (itemCounts[item.name] || 0) + 1;
-            });
-
-            let details = '';
-            for (let item in itemCounts) {
-                details += `• ${item} x${itemCounts[item]}\n`;
-            }
-
-            // 3. 提交前二次确认
-            const tableNo = getTableNo();
-            const tableLabel = tableNo || '未设定桌号';
-            const isConfirmed = confirm(
-                `确认提交订单吗？（共 ${totalCount} 件菜品）\n` +
-                `桌号 / Mesa: ${tableLabel}\n\n` +
-                `*提示：提交后请联系服务员核对订单*\n` +
-                `Confirma el pedido? (${totalCount} platos)`
-            );
-            if (!isConfirmed) return;
-
-            // 4. 锁定按钮 & 记录提交时间（开始冷却）
-            localStorage.setItem('last_submit_time', Date.now().toString());
-            disableSubmitButton(submitBtn, SECURITY_CONFIG.SUBMIT_COOLDOWN);
-
-            // 5. 组装安全 Payload：只传桌号/设备标识/菜品名与数量，
-            //    总价仅作参考标注，最终金额以店内按菜单核对为准
-            const payload = {
-                tableNo: tableLabel,
-                deviceId: getDeviceId(),
-                timestamp: Date.now(),
-                items: Object.keys(itemCounts).map(name => ({ name: name, qty: itemCounts[name] }))
-            };
-            console.log('正在安全的发送订单数据:', payload);
-
-            // 拼接发送给 WhatsApp 的文本（本页无自建后端，接收端即 WhatsApp）
-            let message = `🛒 *NUEVO PEDIDO / 新订单*\n\n` +
-                          `*Mesa / 桌号：* ${tableLabel}\n` +
-                          `*Equipo / 设备：* ${payload.deviceId}\n\n` +
-                          `*Detalles / 菜品明细：*\n${details}\n` +
-                          `*Total / 总金额：* ₡${totalPrice.toLocaleString()} (参考)\n\n` +
-                          `Por favor confirmar el pedido. / 请确认订单。`;
-
-            // WhatsApp 接收号码 (+506 6098-8889)
-            let phoneNumber = "50660988889";
-
-            // 打开 WhatsApp 跳转链接
-            let whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-            window.location.href = whatsappUrl;
-        }
-    </script>
+// ==================== 提交（加固版） ====================
+function submitOrder(){
+  const submitBtn = document.getElementById('submit-btn');
+  const cd = checkCooldown();
+  if (cd > 0){ alert('提交太频繁！请等待 ' + cd + ' 秒后再试。\n/Espere ' + cd + ' segundos.'); return; }
+  const s = counts();
+  if (s.c < SECURITY_CONFIG.MIN_ORDER_AMOUNT){ alert('请先选择要点的菜品！ / Por favor seleccione un platillo.'); return; }
+  if (s.c > SECURITY_CONFIG.MAX_ORDER_AMOUNT){ alert('单次点餐菜品不能超过 ' + SECURITY_CONFIG.MAX_ORDER_AMOUNT + ' 份，请核对订单。'); return; }
+  let details = '';
+  for (const k in CART){ details += '• ' + k + ' x' + CART[k].qty + '\n'; }
+  const tableNo = getTableNo();
+  const tableLabel = tableNo || '未设定桌号';
+  if (!confirm('确认提交订单吗？（共 ' + s.c + ' 件菜品）\n桌号 / Mesa: ' + tableLabel + '\n\n*提示：提交后请联系服务员核对订单*\nConfirma el pedido? (' + s.c + ' platos)')) return;
+  localStorage.setItem('last_submit_time', Date.now().toString());
+  disableSubmitButton(submitBtn, SECURITY_CONFIG.SUBMIT_COOLDOWN);
+  const payload = { tableNo: tableLabel, deviceId: getDeviceId(), timestamp: Date.now(),
+    items: Object.keys(CART).map(function(k){ return { name: k, qty: CART[k].qty }; }) };
+  console.log('正在安全的发送订单数据:', payload);
+  const message = '🛒 *NUEVO PEDIDO / 新订单*\n\n' +
+    '*Mesa / 桌号：* ' + tableLabel + '\n' +
+    '*Equipo / 设备：* ' + payload.deviceId + '\n\n' +
+    '*Detalles / 菜品明细：*\n' + details + '\n' +
+    '*Total / 总金额：* ' + money(s.t) + ' (参考)\n\n' +
+    'Por favor confirmar el pedido. / 请确认订单。';
+  window.location.href = 'https://wa.me/50660988889?text=' + encodeURIComponent(message);
+}
+</script>
 </body>
 </html>
